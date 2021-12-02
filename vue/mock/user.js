@@ -8,18 +8,72 @@ const tokens = {
   }
 }
 
+const adminRoutes = [
+  {
+    path: '/',
+    children: [
+      {
+        path: 'dashboard'
+      }
+    ]
+  },
+  {
+    path: '/example',
+    children: [
+      {
+        path: 'table'
+      },
+      {
+        path: 'tree'
+      }
+    ]
+  },
+  {
+    path: '/form',
+    children: [
+      {
+        path: 'index'
+      }
+    ]
+  }
+]
+
+const editRoutes = [
+  {
+    path: '/',
+    children: [
+      {
+        path: 'dashboard'
+      }
+    ]
+  },
+  {
+    path: '/example',
+    children: [
+      {
+        path: 'table'
+      },
+      {
+        path: 'tree'
+      }
+    ]
+  }
+]
+
 const users = {
   'admin-token': {
     roles: ['admin'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: 'Super Admin',
+    routes: adminRoutes
   },
   'editor-token': {
     roles: ['editor'],
     introduction: 'I am an editor',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+    name: 'Normal Editor',
+    routes: editRoutes
   }
 }
 

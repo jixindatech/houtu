@@ -31,7 +31,7 @@ export default {
       'sidebar'
     ]),
     routes() {
-      return this.$router.options.routes
+      return this.changeRoutes(this.$router.options.routes)
     },
     activeMenu() {
       const route = this.$route
@@ -50,6 +50,61 @@ export default {
     },
     isCollapse() {
       return !this.sidebar.opened
+    }
+  },
+  methods: {
+    mergeRoutes(router1, router2) {
+      var newRouters = []
+      if (router1.length > 0 && router2.length > 0) {
+        for (let i = 0; i < router1.length; i++) {
+          for (let j = 0; j < router2.length; j++) {
+            if (router1[i].path === router2[j].path) {
+              var item = {
+                path: router2[j].path
+              }
+
+              if (router2[j].name !== undefined) {
+                item['name'] = router2[j].name
+              }
+              if (router2[j].hidden === true) {
+                item['hidden'] = true
+              }
+
+              if (router2[j].meta !== undefined) {
+                item['meta'] = router2[j].meta
+              }
+
+              if (router2[j].redirect !== undefined) {
+                item['redirect'] = router2[j].redirect
+              }
+
+              item['children'] = []
+              if (router1[i].children !== undefined && router2[j].children !== undefined) {
+                var router = this.mergeRoutes(router1[i].children, router2[j].children)
+                if (router.length > 0) {
+                  item['children'] = router
+                }
+              }
+              if (item['children'].length === 0) {
+                delete item['children']
+              }
+
+              newRouters.push(item)
+            }
+          }
+        }
+      }
+
+      return newRouters
+    },
+
+    changeRoutes(routes) {
+      const router = this.$store.getters.routes
+      if (router.length === 0) {
+        return []
+      }
+      var newRoutes = this.mergeRoutes(router, routes)
+      return newRoutes
     }
   }
 }
