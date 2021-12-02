@@ -8,12 +8,6 @@ log:
   maxage: 28
   compress: false
 
-app:
-  page-size: 10
-  jwt-token-name: 'Auth-Token'
-  jwt-secret: '23311111sdf@wsefsdf'
-  admin-secret: '111111'
-
 server:
   port : 8080
   read-timeout : 60
@@ -26,6 +20,17 @@ database:
   host : 127.0.0.1:3306
   name : admin
   table-prefix :
+
+rbac:
+  model: etc/basic_model.conf
+  policy: etc/basic_policy.csv
+  role: etc/role.yaml
+
+app:
+  page-size: 10
+  jwt-token-name: 'Auth-Token'
+  jwt-secret: '23311111sdf@wsefsdf'
+  admin-secret: '111111'
 
 elasticsearch:
   host: http://192.168.3.203:9200

@@ -1,0 +1,23 @@
+admin:
+  -
+    path: /
+    children:
+      -
+        path: dashboard
+  -
+    path: /example
+    children:
+      -
+        {
+          path: table
+        }
+      -
+        {
+          path: tree
+        }
+edit:
+  -
+    path: /
+    children:
+      -
+        path: dashboard

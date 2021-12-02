@@ -37,6 +37,12 @@ type DataBase struct {
 	TablePrefix string `mapstructure:"table-prefix"`
 }
 
+type Rbac struct {
+	Model  string `mapstructure:"modle"`
+	Policy string `mapstructure:"policy"`
+	Role   string `mapstructure:"role"`
+}
+
 type Elasticsearch struct {
 	Host     string `mapstructure:"host" json:"host" yaml:"host"`
 	Timeout  string `mapstructure:"timeout" json:"timeout" yaml:"timeout"`
@@ -50,6 +56,7 @@ type Config struct {
 	Log      *Log      `mapstructure:"log"`
 	Server   *Server   `mapstructure:"server"`
 	Database *DataBase `mapstructer:"database"`
+	Rbac     *Rbac     `mapstructer:"rbac"`
 }
 
 var config *Config

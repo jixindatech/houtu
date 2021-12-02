@@ -2,6 +2,7 @@ package server
 
 import (
 	"admin/config"
+	"admin/core/rbac"
 	"admin/server/models"
 	"admin/server/router"
 	"fmt"
@@ -18,6 +19,11 @@ func (s *Server) Setup(cfg *config.Config) error {
 	s.cfg = cfg
 
 	err := models.Setup(cfg.Database)
+	if err != nil {
+		return err
+	}
+
+	err = rbac.Setup(cfg.Rbac)
 	if err != nil {
 		return err
 	}
