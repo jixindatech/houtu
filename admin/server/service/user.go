@@ -19,6 +19,9 @@ type User struct {
 	Role        string
 
 	Remark string
+
+	Page     int
+	PageSize int
 }
 
 func (u *User) Save() error {
@@ -32,6 +35,7 @@ func (u *User) Save() error {
 		"role":        u.Role,
 		"remark":      u.Remark,
 	}
+
 	if u.ID > 0 {
 		if len(u.Password) > 0 {
 			salt, password := util.GetSaltAndEncodedPassword(u.Password)
@@ -42,4 +46,21 @@ func (u *User) Save() error {
 	}
 
 	return models.AddUser(data)
+}
+
+func (u *User) Delete() error {
+	return models.DeleteUser(u.ID)
+}
+
+func (u *User) Get() (*models.User, error) {
+	return models.GetUser(u.ID)
+}
+
+func (u *User) GetList() ([]*models.User, error) {
+	var query = make(map[string]interface{})
+	if len(u.Username) > 0 {
+		query["username"] = u.Username
+	}
+
+	return models.GetUsers(query, u.Page, u.PageSize)
 }
