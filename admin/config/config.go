@@ -6,7 +6,7 @@ import (
 )
 
 type Log struct {
-	Path      string `mapstructure:"path"`
+	Filename  string `mapstructure:"filename"`
 	Level     string `mapstructure:"level"`
 	MaxSize   int    `mapstructure:"maxsize"`
 	MaxBackup int    `mapstructure:"maxbackup"`
@@ -29,12 +29,12 @@ type Server struct {
 }
 
 type DataBase struct {
-	Type        string `mapstructure:"type" json:"type" yaml:"type"`
-	Host        string `mapstructure:"host" json:"host" yaml:"host"`
-	User        string `mapstructure:"user" json:"user" yaml:"user"`
-	Password    string `mapstructure:"password" json:"password" yaml:"password"`
-	Name        string `mapstructure:"name" json:"name" yaml:"name"`
-	TablePrefix string `mapstructure:"table-prefix" json:"TablePrefix" yaml:"table-prefix"`
+	Type        string `mapstructure:"type"`
+	Host        string `mapstructure:"host"`
+	User        string `mapstructure:"user"`
+	Password    string `mapstructure:"password"`
+	Name        string `mapstructure:"name"`
+	TablePrefix string `mapstructure:"table-prefix"`
 }
 
 type Elasticsearch struct {
@@ -46,9 +46,10 @@ type Elasticsearch struct {
 }
 
 type Config struct {
-	RunMode string  `mapstructure:"run_mode"`
-	Log     *Log    `mapstructure:"log"`
-	Server  *Server `mapstructure:"server"`
+	RunMode  string    `mapstructure:"run_mode"`
+	Log      *Log      `mapstructure:"log"`
+	Server   *Server   `mapstructure:"server"`
+	Database *DataBase `mapstructer:"database"`
 }
 
 var config *Config

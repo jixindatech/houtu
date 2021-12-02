@@ -1,7 +1,7 @@
 run_mode: debug #debug release test
 
 log:
-  path: logs
+  filename: logs/gin.log
   level: info  #debug info warn error panic fatal
   maxsize: 10
   maxbackup: 3
@@ -23,9 +23,9 @@ database:
   type : mysql
   user : root
   password : 123456
-  host : mysql.cfg.com:3306
-  name : blog
-  table-prefix : blog_
+  host : 127.0.0.1:3306
+  name : admin
+  table-prefix :
 
 elasticsearch:
   host: http://192.168.3.203:9200

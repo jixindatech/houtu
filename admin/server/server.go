@@ -17,7 +17,7 @@ type Server struct {
 func (s *Server) Setup(cfg *config.Config) error {
 	s.cfg = cfg
 
-	err := models.Setup()
+	err := models.Setup(cfg.Database)
 	if err != nil {
 		return err
 	}

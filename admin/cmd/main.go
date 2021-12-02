@@ -32,20 +32,20 @@ func main() {
 
 	cfg, err := config.ParseConfigFile(*configFile)
 	if err != nil {
-		fmt.Println("parse config file error:%v\n", err.Error())
+		fmt.Println("parse config file error: ", err.Error())
 		return
 	}
 
 	err = log.Setup(cfg.Log)
 	if err != nil {
-		fmt.Println("setup log error:%v\n", err.Error())
+		fmt.Println("setup log error: ", err.Error())
 		return
 	}
 
 	srv := new(server.Server)
 	err = srv.Setup(cfg)
 	if err != nil {
-		fmt.Println("setup server error:%v\n", err.Error())
+		fmt.Println("setup server error: ", err.Error())
 		return
 	}
 

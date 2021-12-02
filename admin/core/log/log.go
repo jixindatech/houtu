@@ -32,7 +32,7 @@ func getLevel(level string) zapcore.Level {
 
 func Setup(log *config.Log) error {
 	hook := lumberjack.Logger{
-		Filename:   log.Path,
+		Filename:   log.Filename,
 		MaxSize:    log.MaxSize,
 		MaxBackups: log.MaxBackup,
 		MaxAge:     log.MaxAge,
@@ -59,9 +59,9 @@ func Setup(log *config.Log) error {
 	atomicLevel.SetLevel(level)
 
 	core := zapcore.NewCore(
-		zapcore.NewJSONEncoder(encoderConfig),                                           // 编码器配置
-		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)), // 打印到控制台和文件
-		atomicLevel, // 日志级别
+		zapcore.NewJSONEncoder(encoderConfig),
+		zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(&hook)),
+		atomicLevel,
 	)
 
 	if level == zapcore.DebugLevel {
