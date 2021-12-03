@@ -32,7 +32,7 @@ func AddUser(c *gin.Context) {
 	err := app.BindAndValid(c, &form)
 	if err != nil {
 		httpCode = http.StatusBadRequest
-		appG.Response(httpCode, errCode, err.Error(), nil)
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
 		return
 	}
 
@@ -54,4 +54,8 @@ func AddUser(c *gin.Context) {
 	}
 
 	appG.Response(httpCode, errCode, "", nil)
+}
+
+func Login(c *gin.Context) (interface{}, error) {
+	return nil, nil
 }

@@ -2,7 +2,7 @@ run_mode: debug #debug release test
 
 log:
   filename: logs/gin.log
-  level: info  #debug info warn error panic fatal
+  level: debug  #debug info warn error panic fatal
   maxsize: 10
   maxbackup: 3
   maxage: 28

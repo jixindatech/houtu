@@ -32,6 +32,7 @@ func setupAuth(authFile string) error {
 	if err != nil {
 		return err
 	}
+
 	authPaths = make(map[string][]map[string]interface{})
 	authApis = make(map[string][]string)
 	ROLES = make(map[string]bool)

@@ -2,6 +2,7 @@ package app
 
 import (
 	"admin/core/rbac"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"regexp"
@@ -26,7 +27,7 @@ func ValidatePhone(fl validator.FieldLevel) bool {
 
 func ValidateRole(fl validator.FieldLevel) bool {
 	role := fl.Field().String()
-	if rbac.ROLES[role] != false {
+	if rbac.ROLES != nil && rbac.ROLES[role] != false {
 		return true
 	}
 
@@ -56,5 +57,9 @@ func BindAndValid(c *gin.Context, form interface{}) error {
 		return err
 	}
 
-	return validate.Struct(form)
+	if validate != nil {
+		return validate.Struct(form)
+	}
+
+	return fmt.Errorf("%s", "invalid validate")
 }
