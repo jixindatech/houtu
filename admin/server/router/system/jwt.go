@@ -1,11 +1,10 @@
-package util
+package system
 
 import (
 	"admin/core/log"
 	"admin/core/rbac"
 	"admin/server/pkg/app"
 	"admin/server/pkg/e"
-	"admin/server/router/api"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -19,7 +18,7 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 		Key:         []byte("secret key"),
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
-		IdentityKey: api.IDENTITY,
+		IdentityKey: IDENTITY,
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			appG := app.Gin{C: c}
 			appG.Response(code, e.ERROR, message, nil)
@@ -28,11 +27,11 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 			return login(c)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*api.User); ok {
+			if v, ok := data.(*User); ok {
 				return jwt.MapClaims{
-					api.IDENTITY: v.ID,
-					"username":   v.Username,
-					"role":       v.Role,
+					IDENTITY:   v.ID,
+					"username": v.Username,
+					"role":     v.Role,
 				}
 			}
 			return jwt.MapClaims{}
@@ -46,8 +45,8 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &api.User{
-				ID:       claims[api.IDENTITY].(uint),
+			return &User{
+				ID:       claims[IDENTITY].(uint),
 				Username: claims["username"].(string),
 				Role:     claims["role"].(string),
 			}
@@ -58,7 +57,7 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 				return false
 			}
 
-			user := data.(*api.User)
+			user := data.(*User)
 			sub := user.Role
 			uri := c.Request.URL.Path
 			method := c.Request.Method

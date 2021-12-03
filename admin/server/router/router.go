@@ -3,8 +3,7 @@ package router
 import (
 	"admin/core/log"
 	"admin/server/pkg/app"
-	"admin/server/router/api"
-	"admin/server/util"
+	"admin/server/router/system"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"time"
@@ -21,11 +20,11 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	r.Use(ginzap.Ginzap(log.Logger, time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(log.Logger, true))
 
-	authMiddleware, err := util.GetJwtMiddleWare(api.Login, api.Logout)
+	authMiddleware, err := system.GetJwtMiddleWare(system.Login, system.Logout)
 	if err != nil {
 		return nil, err
 	}
-	r.NoRoute(authMiddleware.MiddlewareFunc(), util.NoRoute)
+	r.NoRoute(authMiddleware.MiddlewareFunc(), system.NoRoute)
 
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.GET("/refresh_token", authMiddleware.RefreshHandler)
@@ -39,8 +38,8 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	auth := authMiddleware.MiddlewareFunc
 	apis := r.Group("/", auth())
 	{
-		apis.POST("/user", api.AddUser)
-		apis.GET("/user/info", api.GetUserInfo)
+		apis.POST("/user", system.AddUser)
+		apis.GET("/user/info", system.GetUserInfo)
 	}
 
 	return r, nil

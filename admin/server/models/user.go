@@ -82,9 +82,5 @@ func GetUserByUsername(username string) (*User, error) {
 		return nil, err
 	}
 
-	if user.ID > 0 {
-		return &user, nil
-	}
-
-	return nil, nil
+	return &user, nil
 }

@@ -2,7 +2,6 @@ package models
 
 import (
 	"admin/config"
-	"admin/server/service"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -17,12 +16,7 @@ type Model struct {
 	UpdatedAt time.Time `json:"updateAt"`
 }
 
-const (
-	admin = "admin"
-	role  = "admin"
-)
-
-func Setup(cfg *config.DataBase, password string) error {
+func Setup(cfg *config.DataBase) error {
 	var err error
 	if cfg.Type == "mysql" {
 		db, err = gorm.Open(cfg.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -51,14 +45,6 @@ func Setup(cfg *config.DataBase, password string) error {
 		User{},
 	)
 
-	// save admin record or update admin password
-	if len(password) > 0 {
-		user := service.User{}
-		err := user.SaveAdmin(admin, role, password)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 

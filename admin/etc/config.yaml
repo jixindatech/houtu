@@ -28,9 +28,7 @@ rbac:
 
 app:
   page-size: 10
-  jwt-token-name: 'Auth-Token'
-  jwt-secret: '23311111sdf@wsefsdf'
-  admin-secret: '111111'
+  adminpassword: '123456'
 
 elasticsearch:
   host: http://192.168.3.203:9200

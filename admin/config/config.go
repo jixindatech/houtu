@@ -15,11 +15,8 @@ type Log struct {
 }
 
 type App struct {
-	Salt         string `mapstructure:"salt" json:"-" yaml:"salt"`
-	PageSize     int    `mapstructure:"page-size" json:"PageSize" yaml:"page-size"`
-	JwtTokenName string `mapstructure:"jwt-token-name" json:"JwtTokenName" yaml:"jwt-token-name"`
-	JwtSecret    string `mapstructure:"jwt-secret" json:"JwtSecret" yaml:"jwt-secret"`
-	AdminSecret  string `mapstructure:"admin-secret" json:"-" yaml:"jwt-secret"`
+	PageSize      int    `mapstructure:"page-size"`
+	AdminPassword string `mapstructure:"adminpassword"`
 }
 
 type Server struct {
@@ -57,6 +54,7 @@ type Config struct {
 	Server   *Server   `mapstructure:"server"`
 	Database *DataBase `mapstructer:"database"`
 	Rbac     *Rbac     `mapstructer:"rbac"`
+	App      *App      `mapstructer:"app"`
 }
 
 var config *Config

@@ -5,9 +5,15 @@ import (
 	"admin/core/rbac"
 	"admin/server/models"
 	"admin/server/router"
+	"admin/server/service"
 	"fmt"
 	"net/http"
 	"time"
+)
+
+const (
+	admin = "admin"
+	role  = "admin"
 )
 
 type Server struct {
@@ -23,6 +29,13 @@ func (s *Server) Setup(cfg *config.Config) error {
 		return fmt.Errorf("model error: %s", err)
 	}
 
+	// setup admin account or update admin password
+	if len(cfg.App.AdminPassword) > 0 {
+		err = service.SaveAdmin(admin, role, cfg.App.AdminPassword)
+		if err != nil {
+			return err
+		}
+	}
 	err = rbac.Setup(cfg.Rbac)
 	if err != nil {
 		return fmt.Errorf("rbac error: %s", err)
