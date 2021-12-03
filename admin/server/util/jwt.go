@@ -2,8 +2,10 @@ package util
 
 import (
 	"admin/core/log"
+	"admin/core/rbac"
 	"admin/server/pkg/app"
 	"admin/server/pkg/e"
+	"admin/server/router/api"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -11,37 +13,26 @@ import (
 	"time"
 )
 
-type user struct {
-	ID       uint
-	Username string
-	Role     string
-}
-
-var identityKey = "id" //primary key for gin
-
 func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout func(c *gin.Context)) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
 		Timeout:     time.Hour,
 		MaxRefresh:  time.Hour,
-		IdentityKey: identityKey,
+		IdentityKey: api.IDENTITY,
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			appG := app.Gin{C: c}
 			appG.Response(code, e.ERROR, message, nil)
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
-			//data["id"] = id
-			//data["username"] = username
-			//data["role"] = role
 			return login(c)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*user); ok {
+			if v, ok := data.(*api.User); ok {
 				return jwt.MapClaims{
-					identityKey: v.ID,
-					"username":  v.Username,
-					"role":      v.Role,
+					api.IDENTITY: v.ID,
+					"username":   v.Username,
+					"role":       v.Role,
 				}
 			}
 			return jwt.MapClaims{}
@@ -55,16 +46,30 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &user{
-				ID:       claims[identityKey].(uint),
+			return &api.User{
+				ID:       claims[api.IDENTITY].(uint),
 				Username: claims["username"].(string),
 				Role:     claims["role"].(string),
 			}
 		},
 		Authorizator: func(data interface{}, c *gin.Context) bool {
-			// rbac Test here
-			if v, ok := data.(*user); ok && v.Username == "admin" {
+			enforcer := rbac.GetEnforcer()
+			if enforcer == nil {
+				return false
+			}
+
+			user := data.(*api.User)
+			sub := user.Role
+			uri := c.Request.URL.Path
+			method := c.Request.Method
+
+			ok, err := enforcer.Enforce(sub, uri, method)
+			if ok {
 				return true
+			}
+
+			if err != nil {
+				log.Logger.Error("jwt", zap.String("enforce", err.Error()))
 			}
 
 			return false

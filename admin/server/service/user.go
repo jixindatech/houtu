@@ -64,3 +64,7 @@ func (u *User) GetList() ([]*models.User, error) {
 
 	return models.GetUsers(query, u.Page, u.PageSize)
 }
+
+func (u *User) GetLoginUser() (*models.User, error) {
+	return nil, nil
+}

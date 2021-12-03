@@ -21,7 +21,7 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	r.Use(ginzap.Ginzap(log.Logger, time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(log.Logger, true))
 
-	authMiddleware, err := util.GetJwtMiddleWare(nil, nil)
+	authMiddleware, err := util.GetJwtMiddleWare(api.Login, api.Logout)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +40,7 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	apis := r.Group("/", auth())
 	{
 		apis.POST("/user", api.AddUser)
+		apis.GET("/user/info", api.GetUserInfo)
 	}
 
 	return r, nil
