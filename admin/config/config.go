@@ -38,9 +38,9 @@ type DataBase struct {
 }
 
 type Rbac struct {
-	Model  string `mapstructure:"modle"`
+	Model  string `mapstructure:"model"`
 	Policy string `mapstructure:"policy"`
-	Role   string `mapstructure:"role"`
+	Auth   string `mapstructure:"auth"`
 }
 
 type Elasticsearch struct {

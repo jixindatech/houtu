@@ -20,17 +20,17 @@ func (s *Server) Setup(cfg *config.Config) error {
 
 	err := models.Setup(cfg.Database)
 	if err != nil {
-		return err
+		return fmt.Errorf("model error: %s", err)
 	}
 
 	err = rbac.Setup(cfg.Rbac)
 	if err != nil {
-		return err
+		return fmt.Errorf("rbac error: %s", err)
 	}
 
 	r, err := router.Setup(cfg.RunMode)
 	if err != nil {
-		return err
+		return fmt.Errorf("router error: %s", err)
 	}
 
 	s.server = &http.Server{

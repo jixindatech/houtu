@@ -22,9 +22,9 @@ database:
   table-prefix :
 
 rbac:
-  model: etc/basic_model.conf
-  policy: etc/basic_policy.csv
-  role: etc/role.yaml
+  model: etc\basic_model.conf
+  policy: etc\basic_policy.csv
+  auth: etc\auth.json
 
 app:
   page-size: 10
