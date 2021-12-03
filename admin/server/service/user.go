@@ -3,6 +3,7 @@ package service
 import (
 	"admin/server/models"
 	"admin/server/util"
+	"fmt"
 )
 
 type User struct {
@@ -66,5 +67,18 @@ func (u *User) GetList() ([]*models.User, error) {
 }
 
 func (u *User) GetLoginUser() (*models.User, error) {
-	return nil, nil
+	user, err := models.GetUserByUsername(u.Username)
+	if err != nil {
+		return nil, err
+	}
+
+	if user == nil {
+		return nil, fmt.Errorf("invalid username")
+	}
+
+	if util.VerifyRawPassword(u.Password, user.Password, user.Salt) {
+		return user, nil
+	}
+
+	return nil, fmt.Errorf("invalid password")
 }

@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 type User struct {
 	Model
-	Username    string `json:"username" gorm:"column:username;comment:'用户'"`
+	Username    string `json:"username" gorm:"column:username;unique;comment:'用户'"`
 	DisplayName string `json:"displayName" gorm:"column:display_name;comment:'昵称'"`
 	LoginType   string `json:"loginType" gorm:"column:login_type;comment:'登陆类型'"`
 	Password    string `json:"-" gorm:"column:password;comment:'密码'"`
@@ -73,4 +73,18 @@ func GetUsers(query map[string]interface{}, page int, pageSize int) ([]*User, er
 	}
 
 	return users, nil
+}
+
+func GetUserByUsername(username string) (*User, error) {
+	var user User
+	err := db.Where("username = ?", username).First(&user).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	if user.ID > 0 {
+		return &user, nil
+	}
+
+	return nil, nil
 }

@@ -151,6 +151,8 @@ func Login(c *gin.Context) (interface{}, error) {
 
 	user, err := userSrv.GetLoginUser()
 	if err != nil {
+		/* For security */
+		log.Logger.Error("user", zap.String("err", err.Error()))
 		return nil, fmt.Errorf("%s", "user login failed")
 	}
 
