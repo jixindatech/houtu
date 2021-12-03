@@ -18,6 +18,14 @@ const adminRoutes = [
     ]
   },
   {
+    path: '/system',
+    children: [
+      {
+        path: 'user'
+      }
+    ]
+  },
+  {
     path: '/example',
     children: [
       {
