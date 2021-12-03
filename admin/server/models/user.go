@@ -7,8 +7,8 @@ type User struct {
 	Username    string `json:"username" gorm:"column:username;unique;comment:'用户'"`
 	DisplayName string `json:"displayName" gorm:"column:display_name;comment:'昵称'"`
 	LoginType   string `json:"loginType" gorm:"column:login_type;comment:'登陆类型'"`
-	Password    string `json:"-" gorm:"column:password;comment:'密码'"`
-	Salt        string `json:"-" gorm:"column:salt;comment:'盐'"`
+	Password    string `json:"-" gorm:"column:password;not null;comment:'密码'"`
+	Salt        string `json:"-" gorm:"column:salt;not null;comment:'盐'"`
 	Email       string `json:"email" gorm:"column:email;not null;comment:'用户'"`
 	Phone       string `json:"phone" gorm:"column:phone;comment:'手机'"`
 	Status      int    `json:"status" gorm:"column:status;default:'0';comment:'状态: 1-normal,0-locked'"`

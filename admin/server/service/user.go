@@ -82,3 +82,32 @@ func (u *User) GetLoginUser() (*models.User, error) {
 
 	return nil, fmt.Errorf("invalid password")
 }
+
+func (u *User) SaveAdmin(username, role, password string) error {
+	admin, err := models.GetUserByUsername(username)
+	if err != nil {
+		return err
+	}
+
+	if admin.ID > 0 {
+		salt, encodedPassword := util.GetSaltAndEncodedPassword(password)
+		data := make(map[string]interface{})
+		data["salt"] = salt
+		data["password"] = encodedPassword
+
+		return models.UpdateUser(u.ID, data)
+	}
+	data := map[string]interface{}{
+		"username":  username,
+		"loginType": "standard",
+		"email":     "admin@admin.com",
+		"status":    1,
+		"role":      role,
+		"remark":    "administrator",
+	}
+	salt, encodedPassword := util.GetSaltAndEncodedPassword(password)
+	data["salt"] = salt
+	data["password"] = encodedPassword
+
+	return models.AddUser(data)
+}
