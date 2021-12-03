@@ -18,12 +18,20 @@ type Response struct {
 }
 
 // Response wrapper
-func (g *Gin) Response(httpCode, errCode int, data interface{}) {
-	g.C.JSON(httpCode, Response{
-		Code: errCode,
-		Msg:  e.GetMsg(errCode),
-		Data: data,
-	})
+func (g *Gin) Response(httpCode, errCode int, msg string, data interface{}) {
+	if len(msg) > 0 {
+		g.C.JSON(httpCode, Response{
+			Code: errCode,
+			Msg:  msg,
+			Data: data,
+		})
+	} else {
+		g.C.JSON(httpCode, Response{
+			Code: errCode,
+			Msg:  e.GetMsg(errCode),
+			Data: data,
+		})
+	}
 
 	return
 }

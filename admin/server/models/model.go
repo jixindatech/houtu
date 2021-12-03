@@ -41,6 +41,10 @@ func Setup(cfg *config.DataBase) error {
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
 
+	db.AutoMigrate(
+		User{},
+	)
+
 	return nil
 }
 

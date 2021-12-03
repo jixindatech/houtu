@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+var ROLES map[string]bool
 var authPaths map[string][]map[string]interface{}
 var authApis map[string][]string
 
@@ -33,7 +34,9 @@ func setupAuth(authFile string) error {
 	}
 	authPaths = make(map[string][]map[string]interface{})
 	authApis = make(map[string][]string)
+	ROLES = make(map[string]bool)
 	for _, role := range roles {
+		ROLES[role] = true
 		auth := data.Get(role).Interface()
 		path, apis, err := parserData(auth.([]interface{}))
 		if err != nil {
