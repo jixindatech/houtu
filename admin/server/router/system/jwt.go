@@ -27,7 +27,7 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 			return login(c)
 		},
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
+			if v, ok := data.(*jwtUser); ok {
 				return jwt.MapClaims{
 					IDENTITY:   v.ID,
 					"username": v.Username,
@@ -45,8 +45,8 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &User{
-				ID:       claims[IDENTITY].(uint),
+			return &jwtUser{
+				ID:       uint(claims[IDENTITY].(float64)),
 				Username: claims["username"].(string),
 				Role:     claims["role"].(string),
 			}
@@ -57,7 +57,7 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 				return false
 			}
 
-			user := data.(*User)
+			user := data.(*jwtUser)
 			sub := user.Role
 			uri := c.Request.URL.Path
 			method := c.Request.Method
@@ -86,8 +86,8 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 			appG.Response(http.StatusOK, e.SUCCESS, "", nil)
 		},
 
-		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
-		TokenHeadName: "Bearer",
+		TokenLookup:   "header: X-Token",
+		TokenHeadName: "token",
 		TimeFunc:      time.Now,
 	})
 }

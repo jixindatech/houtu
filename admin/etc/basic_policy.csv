@@ -1,1 +1,2 @@
-p, *, /ping, *
+p, *, /user/info, GET
+p, *, /logout, POST

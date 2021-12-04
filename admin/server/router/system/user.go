@@ -16,7 +16,7 @@ const (
 	IDENTITY = "id"
 )
 
-type User struct {
+type jwtUser struct {
 	ID       uint
 	Username string
 	Role     string
@@ -82,7 +82,7 @@ func GetUserInfo(c *gin.Context) {
 		return
 	}
 
-	userClaim := userJwt.(User)
+	userClaim := userJwt.(*jwtUser)
 	id := userClaim.ID
 	userSrv := service.User{
 		ID: id,
@@ -111,18 +111,18 @@ func GetUserInfo(c *gin.Context) {
 	roles = append(roles, user.Role)
 	data["roles"] = roles
 
-	routes := rbac.GetRoleRouter(user.Role)
-	if len(routes) > 0 {
+	routes := rbac.GetRoleRoutes(user.Role)
+	if routes != nil {
 		data["routes"] = routes
 	} else {
 		data["routes"] = []struct{}{}
 	}
 
-	apis := rbac.GetRoleApi(user.Role)
-	if len(apis) > 0 {
-		data["routes"] = apis
+	api := rbac.GetRoleApi(user.Role)
+	if len(api) > 0 {
+		data["api"] = api
 	} else {
-		data["routes"] = []struct{}{}
+		data["api"] = []struct{}{}
 	}
 
 	appG.Response(httpCode, errCode, "", data)
@@ -156,12 +156,13 @@ func Login(c *gin.Context) (interface{}, error) {
 		return nil, fmt.Errorf("%s", "user login failed")
 	}
 
-	data := make(map[string]interface{})
-	data["id"] = user.ID
-	data["username"] = user.Username
-	data["role"] = user.Role
+	jwtuser := &jwtUser{
+		ID:       user.ID,
+		Username: user.Username,
+		Role:     user.Role,
+	}
 
-	return data, nil
+	return jwtuser, nil
 }
 
 func Logout(c *gin.Context) {

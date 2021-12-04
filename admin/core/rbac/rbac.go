@@ -26,7 +26,7 @@ func GetEnforcer() *casbin.Enforcer {
 	return enforcer
 }
 
-func GetRoleRouter(role string) []map[string]interface{} {
+func GetRoleRoutes(role string) []map[string]interface{} {
 	if authPaths != nil && authPaths[role] != nil {
 		return authPaths[role]
 	}

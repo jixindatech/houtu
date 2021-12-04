@@ -27,8 +27,6 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	r.NoRoute(authMiddleware.MiddlewareFunc(), system.NoRoute)
 
 	r.POST("/login", authMiddleware.LoginHandler)
-	r.GET("/refresh_token", authMiddleware.RefreshHandler)
-	r.POST("/logout", authMiddleware.LogoutHandler)
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
@@ -38,6 +36,8 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	auth := authMiddleware.MiddlewareFunc
 	apis := r.Group("/", auth())
 	{
+		apis.GET("/refresh_token", authMiddleware.RefreshHandler)
+		apis.POST("/logout", authMiddleware.LogoutHandler)
 		apis.POST("/user", system.AddUser)
 		apis.GET("/user/info", system.GetUserInfo)
 	}

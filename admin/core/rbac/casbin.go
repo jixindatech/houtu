@@ -13,7 +13,20 @@ func setupCasbin(model, policy string) error {
 		return err
 	}
 
+	enforcer.AddFunction("role", roleMatchFunc)
+
 	enforcer.EnableLog(true)
 
 	return nil
+}
+
+func roleMatchFunc(args ...interface{}) (interface{}, error) {
+	name1 := args[0].(string)
+	name2 := args[1].(string)
+
+	return (bool)(roleMatch(name1, name2)), nil
+}
+
+func roleMatch(key1 string, key2 string) bool {
+	return key2 == "*" || key1 == key2
 }
