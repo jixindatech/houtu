@@ -68,6 +68,47 @@ func AddUser(c *gin.Context) {
 	appG.Response(httpCode, errCode, "", nil)
 }
 
+type queryUsersForm struct {
+	UserName string `form:"username" validate:"omitempty,max=254"`
+	Page     int    `form:"page" validate:"required,gte=1"`
+	PageSize int    `form:"size" validate:"required,gte=10,lte=50"`
+}
+
+func GetUsers(c *gin.Context) {
+	var (
+		appG     = app.Gin{C: c}
+		form     queryUsersForm
+		httpCode = http.StatusOK
+		errCode  = e.SUCCESS
+	)
+
+	err := app.BindAndValid(c, &form)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+
+	userSrv := service.User{
+		Username: form.UserName,
+		PageSize: form.PageSize,
+		Page:     form.Page,
+	}
+
+	data := make(map[string]interface{})
+	user, total, err := userSrv.GetList()
+	if err != nil {
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserAddFailed
+		log.Logger.Error("user", zap.String("err", err.Error()))
+	} else {
+		data["list"] = user
+		data["total"] = total
+	}
+
+	appG.Response(httpCode, errCode, "", data)
+}
+
 func GetUserInfo(c *gin.Context) {
 	var (
 		appG     = app.Gin{C: c}
@@ -127,6 +168,45 @@ func GetUserInfo(c *gin.Context) {
 
 	appG.Response(httpCode, errCode, "", data)
 	return
+}
+
+func GetUser(c *gin.Context) {
+	var (
+		appG     = app.Gin{C: c}
+		form     app.IDForm
+		httpCode = http.StatusOK
+		errCode  = e.SUCCESS
+	)
+
+	err := app.BindAndValid(c, &form)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+	data := make(map[string]interface{})
+
+	/*
+		userSrv := service.User{
+			ID: form.ID,
+		}
+
+		user, err := userSrv.Get()
+		if err != nil{
+			log.Logger.Error("user", zap.String("err", err.Error()))
+			httpCode = http.StatusInternalServerError
+			errCode = e.UserGetFailed
+		}
+
+		if user != nil && user.ID == 0{
+			httpCode = http.StatusInternalServerError
+			errCode = e.UserGetFailed
+		} else {
+			data["user"] = user
+		}
+	*/
+
+	appG.Response(httpCode, errCode, "", data)
 }
 
 type loginForm struct {

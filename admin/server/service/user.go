@@ -57,7 +57,7 @@ func (u *User) Get() (*models.User, error) {
 	return models.GetUser(u.ID)
 }
 
-func (u *User) GetList() ([]*models.User, error) {
+func (u *User) GetList() ([]*models.User, uint, error) {
 	var query = make(map[string]interface{})
 	if len(u.Username) > 0 {
 		query["username"] = u.Username
@@ -83,8 +83,8 @@ func (u *User) GetLoginUser() (*models.User, error) {
 	return nil, fmt.Errorf("invalid password")
 }
 
-func SaveAdmin(username, role, password string) error {
-	admin, err := models.GetUserByUsername(username)
+func SaveAdmin(id uint, username, role, password string) error {
+	admin, err := models.GetUser(id)
 	if err != nil {
 		return err
 	}

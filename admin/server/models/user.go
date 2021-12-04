@@ -48,31 +48,32 @@ func GetUser(id uint) (*User, error) {
 		return nil, err
 	}
 
-	if user.ID > 0 {
-		return &user, nil
-	}
-
-	return nil, nil
+	return &user, nil
 }
 
-func GetUsers(query map[string]interface{}, page int, pageSize int) ([]*User, error) {
+func GetUsers(query map[string]interface{}, page int, pageSize int) ([]*User, uint, error) {
 	var users []*User
+	var count uint
 	var err error
 
 	pageNum := (page - 1) * pageSize
 
-	username := query["username"].(string)
-	if len(username) > 0 {
-		username = "%" + username + "%"
-		err = db.Where("username like ?", username).Offset(pageNum).Limit(pageSize).Find(&users).Error
-	} else {
-		err = db.Offset(pageNum).Limit(pageSize).Find(&users).Error
-	}
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
+	var username string
+	if query["username"] != nil {
+		username = query["username"].(string)
 	}
 
-	return users, nil
+	if len(username) > 0 {
+		username = "%" + username + "%"
+		err = db.Where("username like ?", username).Offset(pageNum).Limit(pageSize).Find(&users).Count(&count).Error
+	} else {
+		err = db.Offset(pageNum).Limit(pageSize).Find(&users).Count(&count).Error
+	}
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, count, err
+	}
+
+	return users, count, nil
 }
 
 func GetUserByUsername(username string) (*User, error) {

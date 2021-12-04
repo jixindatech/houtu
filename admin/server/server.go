@@ -12,6 +12,7 @@ import (
 )
 
 const (
+	id    = 1
 	admin = "admin"
 	role  = "admin"
 )
@@ -31,7 +32,7 @@ func (s *Server) Setup(cfg *config.Config) error {
 
 	// setup admin account or update admin password
 	if len(cfg.App.AdminPassword) > 0 {
-		err = service.SaveAdmin(admin, role, cfg.App.AdminPassword)
+		err = service.SaveAdmin(id, admin, role, cfg.App.AdminPassword)
 		if err != nil {
 			return err
 		}
