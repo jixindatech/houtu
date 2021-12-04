@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import * as api from '@/api/user'
+import { add, update } from '@/api/user'
 
 export default {
   props: {
@@ -63,11 +63,11 @@ export default {
     },
     formData: {
       type: Object,
-      default: {}
+      default: function() { return {} }
     },
     remoteClose: {
       type: Function,
-      default: function(){}
+      default: function() {}
     }
   },
 
@@ -97,13 +97,13 @@ export default {
     async submitData() {
       let response = null
       if (this.formData.id) {
-        response = await api.update(this.formData)
+        response = await update(this.formData.id, this.formData)
       } else {
         this.formData.password = this.formData.username
-        response = await api.add(this.formData)
+        response = await add(this.formData)
       }
 
-      if ((response.code = 20000)) {
+      if ((response.code === 0)) {
         this.$message({ message: '保存成功', type: 'success' })
         this.handleClose()
       } else {

@@ -4,9 +4,6 @@
       <el-form-item label="用户名:">
         <el-input v-model.trim="query.username" />
       </el-form-item>
-      <el-form-item label="手机号:">
-        <el-input v-model.trim="query.mobile" />
-      </el-form-item>
       <el-form-item>
         <el-button
           icon="el-icon-search"
@@ -29,6 +26,8 @@
       v-loading="listLoading"
       :data="list"
       element-loading-text="Loading"
+      :header-cell-style="{'text-align':'center'}"
+      :cell-style="{'text-align':'center'}"
       border
       fit
       highlight-current-row
@@ -38,33 +37,46 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="Title">
-        <template slot-scope="scope">
-          {{ scope.row.title }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Author" width="110" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pageviews" width="110" align="center">
-        <template slot-scope="scope">
-          {{ scope.row.pageviews }}
-        </template>
-      </el-table-column>
-      <el-table-column class-name="status-col" label="Status" width="110" align="center">
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{ scope.row.status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" prop="created_at" label="Display_time" width="200">
+      <el-table-column prop="username" label="用户名" />
+      <el-table-column prop="phone" label="手机号" width="220" />
+      <el-table-column prop="email" label="邮箱" width="220" />
+      <el-table-column prop="role" label="角色" />
+      <el-table-column prop="createdAt" label="创建时间" width="220">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
+          <span>{{ scope.row.createdAt }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column prop="updateAt" label="更新时间" width="220">
+        <template slot-scope="scope">
+          <i class="el-icon-time" />
+          <span>{{ scope.row.updateAt }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="操作" width="150">
+        <template slot-scope="scope">
+          <el-button
+            type="success"
+            size="mini"
+            @click="handleEdit(scope.row.id)"
+          >编辑</el-button>
+          <el-button
+            type="danger"
+            size="mini"
+            @click="handleDelete(scope.row.id)"
+          >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-pagination
+      :current-page="page.current"
+      :page-sizes="[10, 20, 50]"
+      :page-size="page.size"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="page.total"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
 
     <edit
       :title="edit.title"
@@ -77,7 +89,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getList, deleteById, getById } from '@/api/user'
 import Edit from './edit'
 export default {
   filters: {
@@ -99,6 +111,11 @@ export default {
         visible: false,
         formData: {}
       },
+      page: {
+        current: 1,
+        size: 10,
+        total: 0
+      },
       list: null,
       listLoading: true
     }
@@ -109,8 +126,14 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList().then(response => {
-        this.list = response.data.items
+      getList(
+        this.query,
+        this.page.current,
+        this.page.size
+      ).then(response => {
+        const { data } = response
+        this.list = data.list
+        this.page.total = data.total
         this.listLoading = false
       })
     },
@@ -130,6 +153,40 @@ export default {
       this.edit.formData = {}
       this.edit.visible = false
       this.fetchData()
+    },
+    handleSizeChange(val) {
+      this.page.size = val
+      this.fetchData()
+    },
+    handleCurrentChange(val) {
+      this.page.current = val
+      this.fetchData()
+    },
+    handleEdit(id) {
+      getById(id).then((response) => {
+        const { data } = response
+        this.edit.formData = data.user
+        this.edit.title = '编辑'
+        this.edit.visible = true
+      })
+    },
+    handleDelete(id) {
+      this.$confirm('确认删除这条记录吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deleteById(id).then((response) => {
+            this.$message({
+              type: response.code === 0 ? 'success' : 'error',
+              message: '删除成功!'
+            })
+            this.fetchData()
+          })
+        })
+        .catch(() => {
+        })
     }
   }
 }
