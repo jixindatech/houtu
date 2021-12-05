@@ -17,6 +17,14 @@ func setupCasbin(model, policy string) error {
 
 	enforcer.EnableLog(true)
 
+	/*
+		ok, err := enforcer.Enforce("admin", "/user/abc", "GET")
+		if err != nil {
+			return err
+		}
+		return fmt.Errorf("true: ", ok)
+	*/
+
 	return nil
 }
 

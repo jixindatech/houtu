@@ -9,7 +9,7 @@ import (
 )
 
 type IDForm struct {
-	ID uint `param:"id" validate:"required,min=1"`
+	ID uint `uri:"id" validate:"required,gte=1"`
 }
 
 var validate *validator.Validate
@@ -57,6 +57,19 @@ func SetupValidate() error {
 
 func BindAndValid(c *gin.Context, form interface{}) error {
 	err := c.Bind(form)
+	if err != nil {
+		return err
+	}
+
+	if validate != nil {
+		return validate.Struct(form)
+	}
+
+	return fmt.Errorf("%s", "invalid validate")
+}
+
+func BindUriAndValid(c *gin.Context, form interface{}) error {
+	err := c.BindUri(form)
 	if err != nil {
 		return err
 	}

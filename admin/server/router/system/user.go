@@ -178,33 +178,30 @@ func GetUser(c *gin.Context) {
 		errCode  = e.SUCCESS
 	)
 
-	err := app.BindAndValid(c, &form)
+	err := app.BindUriAndValid(c, &form)
 	if err != nil {
 		httpCode = http.StatusBadRequest
 		appG.Response(httpCode, e.ERROR, err.Error(), nil)
 		return
 	}
+
+	userSrv := service.User{
+		ID: form.ID,
+	}
+	user, err := userSrv.Get()
+	if err != nil {
+		log.Logger.Error("user", zap.String("err", err.Error()))
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserGetFailed
+	}
+
 	data := make(map[string]interface{})
-
-	/*
-		userSrv := service.User{
-			ID: form.ID,
-		}
-
-		user, err := userSrv.Get()
-		if err != nil{
-			log.Logger.Error("user", zap.String("err", err.Error()))
-			httpCode = http.StatusInternalServerError
-			errCode = e.UserGetFailed
-		}
-
-		if user != nil && user.ID == 0{
-			httpCode = http.StatusInternalServerError
-			errCode = e.UserGetFailed
-		} else {
-			data["user"] = user
-		}
-	*/
+	if user != nil && user.ID == 0 {
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserGetFailed
+	} else {
+		data["item"] = user
+	}
 
 	appG.Response(httpCode, errCode, "", data)
 }
