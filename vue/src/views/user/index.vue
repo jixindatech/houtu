@@ -38,9 +38,10 @@
         </template>
       </el-table-column>
       <el-table-column prop="username" label="用户名" />
-      <el-table-column prop="phone" label="手机号" width="220" />
+      <el-table-column prop="phone" label="手机号" width="150" />
       <el-table-column prop="email" label="邮箱" width="220" />
       <el-table-column prop="role" label="角色" />
+      <el-table-column prop="loginType" label="认证方式" />
       <el-table-column prop="createdAt" label="创建时间" width="220">
         <template slot-scope="scope">
           <i class="el-icon-time" />
@@ -63,6 +64,7 @@
           <el-button
             type="danger"
             size="mini"
+            :disabled="scope.row.id === 1"
             @click="handleDelete(scope.row.id)"
           >删除</el-button>
         </template>
@@ -165,7 +167,7 @@ export default {
     handleEdit(id) {
       getById(id).then((response) => {
         const { data } = response
-        this.edit.formData = data.user
+        this.edit.formData = data.item
         this.edit.title = '编辑'
         this.edit.visible = true
       })

@@ -26,6 +26,26 @@
       <el-form-item label="邮箱：" prop="email">
         <el-input v-model="formData.email" maxlength="30" />
       </el-form-item>
+      <el-form-item label="角色选项" prop="role">
+        <el-select v-model="formData.role" placeholder="请选择">
+          <el-option
+            v-for="item in ROLE_OPTIONS"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="认证方式" prop="role">
+        <el-select v-model="formData.loginType" placeholder="请选择">
+          <el-option
+            v-for="item in LOGIN_OPTIONS"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="帐号锁定：" prop="status">
         <!-- (1 未锁定，0已锁定) -->
         <el-radio-group v-model="formData.status">
@@ -50,6 +70,7 @@
 
 <script>
 import { add, update } from '@/api/user'
+import { ROLE_OPTIONS, LOGIN_OPTIONS } from '@/utils/const'
 
 export default {
   props: {
@@ -73,11 +94,14 @@ export default {
 
   data() {
     return {
+      ROLE_OPTIONS,
+      LOGIN_OPTIONS,
       rules: {
         username: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         displayName: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
         phone: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
         email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+        role: [{ required: true, message: '请选择', trigger: 'change' }],
         status: [{ required: true, message: '请选择', trigger: 'change' }]
       }
     }

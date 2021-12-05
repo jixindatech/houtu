@@ -1,8 +1,13 @@
-const ROLE_OPTINOS = [
-  {value: 'admin', lable:'admin'},
-  {value: 'edit', lable: 'edit'}
+const ROLE_OPTIONS = [
+  { value: 'admin', lable: 'admin' },
+  { value: 'test', lable: 'test' }
 ]
 
-export default {
-  ROLE_OPTINOS
+const LOGIN_OPTIONS = [
+  { value: 'standard', label: 'standard' }
+]
+
+export {
+  ROLE_OPTIONS,
+  LOGIN_OPTIONS
 }
