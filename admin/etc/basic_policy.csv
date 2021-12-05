@@ -1,6 +1,9 @@
 p, *, /user/info, GET
 p, *, /logout, POST
 p, admin, ^/user$, GET
+p, admin, ^/user$, POST
 p, admin, ^/user/\+?[1-9][0-9]*$, GET
+p, admin, ^/user/\+?[1-9][0-9]*$, PUT
+p, admin, ^/user/\+?[1-9][0-9]*$, DELETE
 
 p, test, ^/user/\+?[1-9][0-9]*$, GET

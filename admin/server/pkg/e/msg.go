@@ -5,8 +5,10 @@ var MsgFlags = map[int]string{
 	ERROR:         "fail",
 	InvalidParams: "请求参数错误",
 
-	UserAddFailed: "添加用户失败",
-	UserGetFailed: "获取用户失败",
+	UserAddFailed:    "添加用户失败",
+	UserGetFailed:    "获取用户失败",
+	UserUpdateFailed: "更新用户失败",
+	UserDeleteFailed: "删除用户失败",
 }
 
 func GetMsg(code int) string {

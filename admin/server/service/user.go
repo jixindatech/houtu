@@ -50,6 +50,9 @@ func (u *User) Save() error {
 }
 
 func (u *User) Delete() error {
+	if u.ID == 1 {
+		return fmt.Errorf("%s", "invalid user id")
+	}
 	return models.DeleteUser(u.ID)
 }
 

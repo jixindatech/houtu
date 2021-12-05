@@ -51,7 +51,7 @@ func AddUser(c *gin.Context) {
 	userSrv := service.User{
 		Username:    form.UserName,
 		DisplayName: form.DisplayName,
-		LoginType:   form.DisplayName,
+		LoginType:   form.LoginType,
 		Email:       form.Email,
 		Phone:       form.Phone,
 		Status:      form.Status,
@@ -62,6 +62,34 @@ func AddUser(c *gin.Context) {
 	if err != nil {
 		httpCode = http.StatusInternalServerError
 		errCode = e.UserAddFailed
+		log.Logger.Error("user", zap.String("err", err.Error()))
+	}
+
+	appG.Response(httpCode, errCode, "", nil)
+}
+
+func DeleteUser(c *gin.Context) {
+	var (
+		appG     = app.Gin{C: c}
+		formId   app.IDForm
+		httpCode = http.StatusOK
+		errCode  = e.SUCCESS
+	)
+
+	err := app.BindUriAndValid(c, &formId)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+
+	userSrv := service.User{
+		ID: formId.ID,
+	}
+	err = userSrv.Delete()
+	if err != nil {
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserDeleteFailed
 		log.Logger.Error("user", zap.String("err", err.Error()))
 	}
 
@@ -204,6 +232,50 @@ func GetUser(c *gin.Context) {
 	}
 
 	appG.Response(httpCode, errCode, "", data)
+}
+
+func UpdateUser(c *gin.Context) {
+	var (
+		appG     = app.Gin{C: c}
+		formId   app.IDForm
+		form     userForm
+		httpCode = http.StatusOK
+		errCode  = e.SUCCESS
+	)
+
+	err := app.BindUriAndValid(c, &formId)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+
+	err = app.BindAndValid(c, &form)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+
+	userSrv := service.User{
+		ID:          formId.ID,
+		Username:    form.UserName,
+		DisplayName: form.DisplayName,
+		LoginType:   form.LoginType,
+		Email:       form.Email,
+		Phone:       form.Phone,
+		Status:      form.Status,
+		Role:        form.Role,
+		Remark:      form.Remark,
+	}
+	err = userSrv.Save()
+	if err != nil {
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserUpdateFailed
+		log.Logger.Error("user", zap.String("err", err.Error()))
+	}
+
+	appG.Response(httpCode, errCode, "", nil)
 }
 
 type loginForm struct {

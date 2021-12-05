@@ -38,10 +38,13 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	{
 		apis.GET("/refresh_token", authMiddleware.RefreshHandler)
 		apis.POST("/logout", authMiddleware.LogoutHandler)
+		apis.GET("/user/info", system.GetUserInfo)
+
 		apis.POST("/user", system.AddUser)
 		apis.GET("/user", system.GetUsers)
 		apis.GET("/user/:id", system.GetUser)
-		apis.GET("/user/info", system.GetUserInfo)
+		apis.PUT("/user/:id", system.UpdateUser)
+		apis.DELETE("/user/:id", system.DeleteUser)
 	}
 
 	return r, nil
