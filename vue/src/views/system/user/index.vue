@@ -32,14 +32,9 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>
       <el-table-column prop="username" label="用户名" />
       <el-table-column prop="phone" label="手机号" width="150" />
-      <el-table-column prop="email" label="邮箱" width="220" />
+      <el-table-column prop="email" label="邮箱" width="180" />
       <el-table-column prop="role" label="角色" />
       <el-table-column prop="loginType" label="认证方式" />
       <el-table-column prop="createdAt" label="创建时间" width="220">
@@ -54,13 +49,19 @@
           <span>{{ scope.row.updateAt }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="150">
+      <el-table-column align="center" label="操作" width="250">
         <template slot-scope="scope">
           <el-button
             type="success"
             size="mini"
             @click="handleEdit(scope.row.id)"
           >编辑</el-button>
+          <el-button
+            type="danger"
+            size="mini"
+            :disabled="scope.row.id === 1"
+            @click="handleResetPassword(scope.row.id)"
+          >密码重置</el-button>
           <el-button
             type="danger"
             size="mini"
@@ -91,7 +92,7 @@
 </template>
 
 <script>
-import { getList, deleteById, getById } from '@/api/user'
+import { getList, deleteById, getById, resetUserPasswordById } from '@/api/user'
 import Edit from './edit'
 export default {
   filters: {
@@ -171,6 +172,27 @@ export default {
         this.edit.title = '编辑'
         this.edit.visible = true
       })
+    },
+    handleResetPassword(id) {
+      this.$confirm('确认重置密码吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          resetUserPasswordById(id).then((response) => {
+            this.$message({
+              type: 'success',
+              message: '重置成功!'
+            })
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'error',
+            message: '重置失败!'
+          })
+        })
     },
     handleDelete(id) {
       this.$confirm('确认删除这条记录吗?', '提示', {

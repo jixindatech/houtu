@@ -59,3 +59,10 @@ export function deleteById(id) {
     method: 'delete'
   })
 }
+
+export function resetUserPasswordById(id) {
+  return request({
+    url: `/system/user/password/${id}`,
+    method: 'put'
+  })
+}
