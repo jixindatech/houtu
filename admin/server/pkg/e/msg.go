@@ -17,6 +17,10 @@ var MsgFlags = map[int]string{
 	LdapAddFailed:    "添加LDAP失败",
 	LdapGetFailed:    "添加LDAP失败",
 	LdapUpdateFailed: "添加LDAP失败",
+
+	TxsmsAddFailed:    "添加Txsms失败",
+	TxsmsGetFailed:    "添加Txsms失败",
+	TxsmsUpdateFailed: "添加Txsms失败",
 }
 
 func GetMsg(code int) string {

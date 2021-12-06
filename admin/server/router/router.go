@@ -54,6 +54,10 @@ func Setup(mode string) (g *gin.Engine, err error) {
 		apis.GET("/ldap", system.GetLdap)
 		apis.POST("/ldap", system.AddLdap)
 		apis.PUT("/ldap/:id", system.UpdateLdap)
+
+		apis.GET("/txsms", system.GetTxsms)
+		apis.POST("/txsms", system.AddTxsms)
+		apis.PUT("/txsms/:id", system.UpdateTxsms)
 	}
 
 	return r, nil

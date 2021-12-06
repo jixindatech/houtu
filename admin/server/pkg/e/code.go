@@ -15,4 +15,7 @@ const (
 	LdapAddFailed     = 30000
 	LdapGetFailed     = 30001
 	LdapUpdateFailed  = 30002
+	TxsmsAddFailed    = 40000
+	TxsmsGetFailed    = 40001
+	TxsmsUpdateFailed = 40002
 )
