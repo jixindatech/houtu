@@ -49,6 +49,31 @@ func (u *User) Save() error {
 	return models.AddUser(data)
 }
 
+func (u *User) UpdatePassword() error {
+	data := make(map[string]interface{})
+
+	user, err := models.GetUser(u.ID)
+	if err != nil {
+		return err
+	}
+	if user.ID == 0 {
+		return fmt.Errorf("%s", "invalid user id")
+	}
+
+	passwordStr := util.GeneratePassword(16)
+	fmt.Println(string(passwordStr))
+	salt, password := util.GetSaltAndEncodedPassword(string(passwordStr))
+	data["salt"] = salt
+	data["password"] = password
+
+	err = models.UpdateUser(u.ID, data)
+	if err != nil {
+		return err
+	}
+
+	return SendMail(user.Email, "重置密码", passwordStr)
+}
+
 func (u *User) Delete() error {
 	if u.ID == 1 {
 		return fmt.Errorf("%s", "invalid user id")

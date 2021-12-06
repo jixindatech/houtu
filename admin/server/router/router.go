@@ -44,6 +44,7 @@ func Setup(mode string) (g *gin.Engine, err error) {
 		apis.GET("/user", system.GetUsers)
 		apis.GET("/user/:id", system.GetUser)
 		apis.PUT("/user/:id", system.UpdateUser)
+		apis.PUT("/user/password/:id", system.UpdateUserPassword)
 		apis.DELETE("/user/:id", system.DeleteUser)
 
 		apis.GET("/email", system.GetEmail)

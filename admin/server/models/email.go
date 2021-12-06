@@ -33,5 +33,5 @@ func GetEmail() (*Email, error) {
 }
 
 func UpdateEmail(id uint, data map[string]interface{}) error {
-	return db.Model(&User{}).Where("id = ?", id).Update(data).Error
+	return db.Model(&Email{}).Where("id = ?", id).Update(data).Error
 }

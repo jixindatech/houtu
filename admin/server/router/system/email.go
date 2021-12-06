@@ -79,7 +79,7 @@ func UpdateEmail(c *gin.Context) {
 		errCode  = e.SUCCESS
 	)
 
-	err := app.BindUriAndValid(c, &form)
+	err := app.BindUriAndValid(c, &formID)
 	if err != nil {
 		httpCode = http.StatusBadRequest
 		appG.Response(httpCode, e.ERROR, err.Error(), nil)
@@ -109,7 +109,7 @@ func UpdateEmail(c *gin.Context) {
 	err = emailSrv.Save()
 	if err != nil {
 		httpCode = http.StatusInternalServerError
-		errCode = e.UserAddFailed
+		errCode = e.EmailUpdateFailed
 		log.Logger.Error("email", zap.String("err", err.Error()))
 	}
 

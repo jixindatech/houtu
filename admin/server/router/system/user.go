@@ -278,6 +278,34 @@ func UpdateUser(c *gin.Context) {
 	appG.Response(httpCode, errCode, "", nil)
 }
 
+func UpdateUserPassword(c *gin.Context) {
+	var (
+		appG     = app.Gin{C: c}
+		formId   app.IDForm
+		httpCode = http.StatusOK
+		errCode  = e.SUCCESS
+	)
+
+	err := app.BindUriAndValid(c, &formId)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+
+	userSrv := service.User{
+		ID: formId.ID,
+	}
+	err = userSrv.UpdatePassword()
+	if err != nil {
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserUpdateFailed
+		log.Logger.Error("user", zap.String("err", err.Error()))
+	}
+
+	appG.Response(httpCode, errCode, "", nil)
+}
+
 type loginForm struct {
 	UserName  string `json:"username" validate:"required"`
 	Password  string `json:"password" validate:"required"`
