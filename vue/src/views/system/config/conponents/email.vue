@@ -5,7 +5,7 @@
       :rules="rules"
       :model="formData"
       label-position="left"
-      label-width="100px"
+      label-width="120px"
       status-icon
     >
       <el-form-item label="邮箱域名：" prop="host" style="width: 300px">
@@ -63,7 +63,6 @@ export default {
   },
   watch: {
     params(newVal, oldVal) {
-      console.log('email:', newVal)
       if (newVal === this.name) {
         this.fetchData()
       }
@@ -74,7 +73,6 @@ export default {
   },
   methods: {
     fetchData() {
-      console.log('email fetch data')
       get().then(response => {
         const { data } = response
         if (data.item && data.item.id !== 0) {
