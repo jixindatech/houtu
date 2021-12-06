@@ -43,6 +43,7 @@ func Setup(cfg *config.DataBase) error {
 
 	db.AutoMigrate(
 		User{},
+		Email{},
 	)
 
 	return nil

@@ -34,10 +34,10 @@ func Setup(mode string) (g *gin.Engine, err error) {
 	})
 
 	auth := authMiddleware.MiddlewareFunc
-	apis := r.Group("/", auth())
+	apis := r.Group("/system", auth())
 	{
-		apis.GET("/refresh_token", authMiddleware.RefreshHandler)
-		apis.POST("/logout", authMiddleware.LogoutHandler)
+		apis.GET("/user/refresh_token", authMiddleware.RefreshHandler)
+		apis.POST("/user/logout", authMiddleware.LogoutHandler)
 		apis.GET("/user/info", system.GetUserInfo)
 
 		apis.POST("/user", system.AddUser)
@@ -45,6 +45,10 @@ func Setup(mode string) (g *gin.Engine, err error) {
 		apis.GET("/user/:id", system.GetUser)
 		apis.PUT("/user/:id", system.UpdateUser)
 		apis.DELETE("/user/:id", system.DeleteUser)
+
+		apis.GET("/email", system.GetEmail)
+		apis.POST("/email", system.AddEmail)
+		apis.PUT("/email/:id", system.UpdateEmail)
 	}
 
 	return r, nil

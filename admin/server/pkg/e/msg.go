@@ -9,6 +9,10 @@ var MsgFlags = map[int]string{
 	UserGetFailed:    "获取用户失败",
 	UserUpdateFailed: "更新用户失败",
 	UserDeleteFailed: "删除用户失败",
+
+	EmailAddFailed:    "添加邮箱失败",
+	EmailGetFailed:    "获取邮箱失败",
+	EmailUpdateFailed: "更新邮箱失败",
 }
 
 func GetMsg(code int) string {
