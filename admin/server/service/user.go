@@ -1,9 +1,12 @@
 package service
 
 import (
+	"admin/core/log"
 	"admin/server/models"
 	"admin/server/util"
 	"fmt"
+	"github.com/go-ldap/ldap/v3"
+	"go.uber.org/zap"
 )
 
 type User struct {
@@ -108,8 +111,30 @@ func (u *User) GetLoginUser() (*models.User, error) {
 		return nil, fmt.Errorf("invalid user status")
 	}
 
-	if util.VerifyRawPassword(u.Password, user.Password, user.Salt) {
-		return user, nil
+	if user.LoginType == "standard" {
+		if util.VerifyRawPassword(u.Password, user.Password, user.Salt) {
+			return user, nil
+		}
+	} else if user.LoginType == "ldap" {
+		ldapConfig, err := getLdapConfig()
+		if err != nil {
+			log.Logger.Error("ldap", zap.String("err", err.Error()))
+		}
+		if ldapConfig != nil {
+			conn, err := ldap.DialURL("ldap://" + ldapConfig.Host + fmt.Sprint(":%d", ldapConfig.Port))
+			if err != nil {
+				log.Logger.Error("ldap", zap.String("err", err.Error()))
+			}
+			if conn != nil {
+				err = conn.Bind(ldapConfig.DN, ldapConfig.Password)
+				if err != nil {
+					return nil, err
+				}
+				//searchRequest := ldap.NewSearchRequest()
+
+				defer conn.Close()
+			}
+		}
 	}
 
 	return nil, fmt.Errorf("invalid password")

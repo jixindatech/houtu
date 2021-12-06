@@ -307,9 +307,8 @@ func UpdateUserPassword(c *gin.Context) {
 }
 
 type loginForm struct {
-	UserName  string `json:"username" validate:"required"`
-	Password  string `json:"password" validate:"required"`
-	LoginType string `json:"loginType" validate:"required"`
+	UserName string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 func Login(c *gin.Context) (interface{}, error) {
@@ -321,9 +320,8 @@ func Login(c *gin.Context) (interface{}, error) {
 	}
 
 	userSrv := service.User{
-		Username:  form.UserName,
-		Password:  form.Password,
-		LoginType: form.LoginType,
+		Username: form.UserName,
+		Password: form.Password,
 	}
 
 	user, err := userSrv.GetLoginUser()

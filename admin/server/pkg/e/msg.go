@@ -13,6 +13,10 @@ var MsgFlags = map[int]string{
 	EmailAddFailed:    "添加邮箱失败",
 	EmailGetFailed:    "获取邮箱失败",
 	EmailUpdateFailed: "更新邮箱失败",
+
+	LdapAddFailed:    "添加LDAP失败",
+	LdapGetFailed:    "添加LDAP失败",
+	LdapUpdateFailed: "添加LDAP失败",
 }
 
 func GetMsg(code int) string {

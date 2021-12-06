@@ -50,6 +50,10 @@ func Setup(mode string) (g *gin.Engine, err error) {
 		apis.GET("/email", system.GetEmail)
 		apis.POST("/email", system.AddEmail)
 		apis.PUT("/email/:id", system.UpdateEmail)
+
+		apis.GET("/ldap", system.GetLdap)
+		apis.POST("/ldap", system.AddLdap)
+		apis.PUT("/ldap/:id", system.UpdateLdap)
 	}
 
 	return r, nil

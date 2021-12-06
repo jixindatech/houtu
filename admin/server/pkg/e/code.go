@@ -12,4 +12,7 @@ const (
 	EmailAddFailed    = 20000
 	EmailGetFailed    = 20001
 	EmailUpdateFailed = 20002
+	LdapAddFailed     = 30000
+	LdapGetFailed     = 30001
+	LdapUpdateFailed  = 30002
 )

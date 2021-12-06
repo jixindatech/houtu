@@ -12,4 +12,8 @@ p, admin, ^/system/email$, GET
 p, admin, ^/system/email$, POST
 p, admin, ^/system/email/\+?[1-9][0-9]*$, PUT
 
+p, admin, ^/system/ldap$, GET
+p, admin, ^/system/ldap$, POST
+p, admin, ^/system/ldap/\+?[1-9][0-9]*$, PUT
+
 p, test,  ^/system/user/\+?[1-9][0-9]*$, GET
