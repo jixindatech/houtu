@@ -3,14 +3,22 @@ package system
 import (
 	"admin/core/log"
 	"admin/core/rbac"
+	"admin/server/cache"
+	"admin/server/models"
 	"admin/server/pkg/app"
 	"admin/server/pkg/e"
+	"admin/server/service"
+	"bytes"
+	"encoding/gob"
+	"fmt"
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
 	"time"
 )
+
+const cacheTTL = 60
 
 func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout func(c *gin.Context)) (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
@@ -57,20 +65,49 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 				return false
 			}
 
-			user := data.(*jwtUser)
-			sub := user.Role
+			jwtUser := data.(*jwtUser)
+			sub := jwtUser.Role
 			uri := c.Request.URL.Path
 			method := c.Request.Method
 
 			ok, err := enforcer.Enforce(sub, uri, method)
-			if ok {
-				return true
-			}
-
 			if err != nil {
 				log.Logger.Error("jwt", zap.String("enforce", err.Error()))
 			}
+			if !ok {
+				return false
+			}
 
+			var user models.User
+			userBytes, err := cache.Get(jwtUser.Username)
+			if err != nil || userBytes == nil {
+				userSrv := service.User{
+					ID: jwtUser.ID,
+				}
+				user, err := userSrv.Get()
+				if err != nil {
+					log.Logger.Error("user", zap.String("err", err.Error()))
+				} else {
+					err = cache.Set(jwtUser.Username, user, cacheTTL)
+					if err != nil {
+						log.Logger.Error("user", zap.String("err", err.Error()))
+					}
+					if user.Status == 1 {
+						return true
+					}
+				}
+			} else {
+				dec := gob.NewDecoder(bytes.NewReader(userBytes.([]byte)))
+				err = dec.Decode(&user)
+				if err != nil {
+					log.Logger.Error("user", zap.String("err", err.Error()))
+				} else {
+					if user.Status == 1 {
+						return true
+					}
+				}
+			}
+			fmt.Println("forbidden page")
 			return false
 		},
 		RefreshResponse: func(c *gin.Context, code int, token string, expire time.Time) {

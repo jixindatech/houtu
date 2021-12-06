@@ -104,6 +104,10 @@ func (u *User) GetLoginUser() (*models.User, error) {
 		return nil, fmt.Errorf("invalid username")
 	}
 
+	if user.Status == 0 {
+		return nil, fmt.Errorf("invalid user status")
+	}
+
 	if util.VerifyRawPassword(u.Password, user.Password, user.Salt) {
 		return user, nil
 	}

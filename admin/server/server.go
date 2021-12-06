@@ -3,6 +3,7 @@ package server
 import (
 	"admin/config"
 	"admin/core/rbac"
+	"admin/server/cache"
 	"admin/server/models"
 	"admin/server/router"
 	"admin/server/service"
@@ -45,6 +46,11 @@ func (s *Server) Setup(cfg *config.Config) error {
 	r, err := router.Setup(cfg.RunMode)
 	if err != nil {
 		return fmt.Errorf("router error: %s", err)
+	}
+
+	err = cache.SetupCache(cfg)
+	if err != nil {
+		return err
 	}
 
 	s.server = &http.Server{

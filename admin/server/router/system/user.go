@@ -28,7 +28,7 @@ type userForm struct {
 	LoginType   string `json:"loginType" validate:"required"`
 	Email       string `json:"email" validate:"required,email"`
 	Phone       string `json:"phone" validate:"required,phone"`
-	Status      int    `json:"status" validate:"required,gte=0,lte=1"`
+	Status      int    `json:"status" validate:"gte=0,lte=1"`
 	Role        string `json:"role" validate:"required"`
 	Remark      string `json:"remark"`
 }

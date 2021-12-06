@@ -40,6 +40,19 @@ type Rbac struct {
 	Auth   string `mapstructure:"auth"`
 }
 
+type Redis struct {
+	Type      string `mapstructer:"type"`
+	Host      string `mapstructure:"host"`
+	Port      int    `mapstructure:"port"`
+	Password  string `mapstructure:"password"`
+	Db        int    `mapstructure:"db"`
+	KeyPrefix string `mapstructure:"key_prefix"`
+}
+
+type Memory struct {
+	PurgeTime time.Duration `mapstructer:"purge_time"`
+}
+
 type Elasticsearch struct {
 	Host     string `mapstructure:"host" json:"host" yaml:"host"`
 	Timeout  string `mapstructure:"timeout" json:"timeout" yaml:"timeout"`
@@ -55,6 +68,9 @@ type Config struct {
 	Database *DataBase `mapstructer:"database"`
 	Rbac     *Rbac     `mapstructer:"rbac"`
 	App      *App      `mapstructer:"app"`
+	Cache    string    `mapstructer:"cache"`
+	Redis    *Redis    `mapstructer:"redis"`
+	Memory   *Memory   `mapstructer:"memory"`
 }
 
 var config *Config
