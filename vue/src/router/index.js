@@ -58,12 +58,19 @@ export const constantRoutes = [
   {
     path: '/system',
     component: Layout,
+    meta: { title: '系统管理', icon: 'el-icon-s-help' },
     redirect: 'user',
     children: [{
       path: 'user',
       name: 'User',
-      component: () => import('@/views/user/index'),
+      component: () => import('@/views/system/user'),
       meta: { title: '用户管理', icon: 'dashboard' }
+    },
+    {
+      path: 'config',
+      name: 'Config',
+      component: () => import('@/views/system/config'),
+      meta: { title: '系统配置', icon: 'dashboard' }
     }]
   },
 
