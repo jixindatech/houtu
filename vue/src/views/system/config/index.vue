@@ -7,9 +7,11 @@
       <el-tab-pane label="Ldap配置" name="ldap">
         <Ldap :params="activeName" name="ldap" />
       </el-tab-pane>
+      <!--
       <el-tab-pane label="Txsms配置" name="txsms">
         <Txsms :params="activeName" name="txsms" />
       </el-tab-pane>
+      -->
     </el-tabs>
   </div>
 </template>
@@ -17,9 +19,9 @@
 <script>
 import Email from './conponents/email'
 import Ldap from './conponents/ldap'
-import Txsms from './conponents/txsms'
+// import Txsms from './conponents/txsms'
 export default {
-  components: { Email, Ldap, Txsms },
+  components: { Email, Ldap },
   data() {
     return {
       activeName: 'email'

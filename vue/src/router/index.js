@@ -66,6 +66,14 @@ export const constantRoutes = [
       component: () => import('@/views/system/user'),
       meta: { title: '用户管理', icon: 'dashboard' }
     },
+    /*
+    {
+      path: 'msg',
+      name: 'Msg',
+      component: () => import('@/views/system/msg'),
+      meta: { title: '短信管理', icon: 'dashboard' }
+    },
+    */
     {
       path: 'config',
       name: 'Config',

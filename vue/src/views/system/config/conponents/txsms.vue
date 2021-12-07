@@ -8,10 +8,13 @@
       label-width="120px"
       status-icon
     >
-      <el-form-item label="secretId：" prop="secretId" style="width: 300px">
+      <el-form-item label="SMS域名：" prop="host" style="width: 500px">
+        <el-input v-model="formData.host" placeholder="请输入SMS域名" />
+      </el-form-item>
+      <el-form-item label="secretId：" prop="secretId" style="width: 500px">
         <el-input v-model="formData.secretId" placeholder="请输入secretId" />
       </el-form-item>
-      <el-form-item label="secretKey：" prop="secretKey" style="width: 300px">
+      <el-form-item label="secretKey：" prop="secretKey" style="width: 500px">
         <el-input v-model="formData.secretKey" show-password placeholder="请输入secretKey" />
       </el-form-item>
       <el-form-item>
@@ -40,6 +43,9 @@ export default {
     return {
       formData: {},
       rules: {
+        host: [
+          { required: true, message: '请输入SMS域名', trigger: 'change' }
+        ],
         secretId: [
           { required: true, message: '请输入secretId', trigger: 'change' }
         ],

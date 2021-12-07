@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-form :inline="true" :model="query" size="mini">
-      <el-form-item label="用户名:">
-        <el-input v-model.trim="query.username" />
+      <el-form-item label="信息名称:">
+        <el-input v-model.trim="query.name" />
       </el-form-item>
       <el-form-item>
         <el-button
@@ -15,17 +15,10 @@
           @click="reload"
         >重置</el-button>
         <el-button
-          v-if="msgId == 0"
           icon="el-icon-circle-plus-outline"
           type="primary"
           @click="openAdd"
         >新增</el-button>
-        <el-button
-          v-if="msgId != 0"
-          icon="el-icon-circle-plus-outline"
-          type="success"
-          @click="handleUserMsg"
-        >群发短信</el-button>
       </el-form-item>
     </el-form>
 
@@ -38,34 +31,24 @@
       border
       fit
       highlight-current-row
-      row-key="id"
-      @selection-change="handleSelectionChange"
     >
-      <el-table-column
-        v-if="msgId != 0"
-        align="center"
-        reserve-selection
-        type="selection"
-        width="55"
-      />
-      <el-table-column prop="username" label="用户名" />
-      <el-table-column prop="phone" label="手机号" width="150" />
-      <el-table-column prop="email" label="邮箱" width="180" />
-      <el-table-column prop="role" label="角色" />
-      <el-table-column prop="loginType" label="认证方式" />
-      <el-table-column v-if="msgId == 0" prop="createdAt" label="创建时间" width="220">
+      <el-table-column align="center" type="index" label="序号" width="60" />
+      <el-table-column prop="name" label="用户名" />
+      <el-table-column prop="content" label="信息内容" />
+      <el-table-column prop="remark" label="备注" width="150" />
+      <el-table-column prop="createdAt" label="创建时间" width="220">
         <template slot-scope="scope">
           <i class="el-icon-time" />
           <span>{{ scope.row.createdAt }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="msgId == 0" prop="updateAt" label="更新时间" width="220">
+      <el-table-column prop="updateAt" label="更新时间" width="220">
         <template slot-scope="scope">
           <i class="el-icon-time" />
           <span>{{ scope.row.updateAt }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="msgId == 0" align="center" label="操作" width="250">
+      <el-table-column align="center" label="操作" width="250">
         <template slot-scope="scope">
           <el-button
             type="success"
@@ -73,15 +56,13 @@
             @click="handleEdit(scope.row.id)"
           >编辑</el-button>
           <el-button
-            type="danger"
+            type="primary"
             size="mini"
-            :disabled="scope.row.id === 1"
-            @click="handleResetPassword(scope.row.id)"
-          >密码重置</el-button>
+            @click="sendMsg(scope.row.id)"
+          >消息群发</el-button>
           <el-button
             type="danger"
             size="mini"
-            :disabled="scope.row.id === 1"
             @click="handleDelete(scope.row.id)"
           >删除</el-button>
         </template>
@@ -103,21 +84,19 @@
       :visible="edit.visible"
       :remote-close="remoteClose"
     />
-
+    <el-dialog title="短信群发" :visible.sync="user.visible" width="65%">
+      <User :msg-id="user.msgId" @sendUserMsg="sendUserMsg" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getList, deleteById, getById, resetUserPasswordById } from '@/api/user'
+import { getList, deleteById, getById, sendUserMsg } from '@/api/msg'
 import Edit from './edit'
+import User from '@/views/system/user'
 export default {
-  components: { Edit },
-  props: {
-    msgId: {
-      type: Number,
-      default: 0
-    }
-  },
+  name: 'Msg',
+  components: { Edit, User },
   data() {
     return {
       query: {},
@@ -133,14 +112,9 @@ export default {
       },
       list: [],
       listLoading: true,
-      checkedUserList: []
-    }
-  },
-  watch: {
-    msgId(newVal, oldVal) {
-      if (newVal !== 0) {
-        this.query = {}
-        this.queryData()
+      user: {
+        visible: false,
+        msg: 0
       }
     }
   },
@@ -170,7 +144,7 @@ export default {
       this.fetchData()
     },
     openAdd() {
-      this.edit.title = '新增用户'
+      this.edit.title = '新增消息'
       this.edit.visible = true
     },
     remoteClose() {
@@ -194,27 +168,6 @@ export default {
         this.edit.visible = true
       })
     },
-    handleResetPassword(id) {
-      this.$confirm('确认重置密码吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(() => {
-          resetUserPasswordById(id).then((response) => {
-            this.$message({
-              type: 'success',
-              message: '重置成功!'
-            })
-          })
-        })
-        .catch(() => {
-          this.$message({
-            type: 'error',
-            message: '重置失败!'
-          })
-        })
-    },
     handleDelete(id) {
       this.$confirm('确认删除这条记录吗?', '提示', {
         confirmButtonText: '确定',
@@ -233,17 +186,17 @@ export default {
         .catch(() => {
         })
     },
-    handleSelectionChange(val) {
-      this.checkedUserList = val
+    sendMsg(id) {
+      this.user.msgId = id
+      this.user.visible = true
     },
-    handleUserMsg() {
-      const checkedUserIds = []
-      this.checkedUserList.forEach((item) => {
-        checkedUserIds.push(item.id)
+    sendUserMsg(ids) {
+      const data = { users: ids }
+      sendUserMsg(this.user.msgId, data).then((response) => {
+        this.$message({ message: '群发消息成功', type: 'success' })
+        this.user.visible = false
+        this.user.msgId = 0
       })
-
-      this.$emit('sendUserMsg', checkedUserIds)
-      this.checkedUserList = []
     }
   }
 }
