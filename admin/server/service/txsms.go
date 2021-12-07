@@ -7,6 +7,7 @@ import (
 type Txsms struct {
 	ID uint
 
+	Host      string
 	SecretId  string
 	SecretKey string
 }
@@ -15,6 +16,7 @@ var txsmsCache *Txsms
 
 func (t *Txsms) Save() error {
 	data := make(map[string]interface{})
+	data["host"] = t.Host
 	data["secretId"] = t.SecretId
 	data["secretKey"] = t.SecretKey
 
@@ -37,6 +39,7 @@ func getTxsmsConfig() (*Txsms, error) {
 		if err != nil {
 			return nil, err
 		}
+		txsmsCache.Host = txsms.Host
 		txsmsCache.SecretKey = txsms.SecretKey
 		txsmsCache.SecretId = txsms.SecretID
 		return txsmsCache, nil

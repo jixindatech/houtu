@@ -18,4 +18,8 @@ const (
 	TxsmsAddFailed    = 40000
 	TxsmsGetFailed    = 40001
 	TxsmsUpdateFailed = 40002
+	MsgAddFailed      = 50000
+	MsgGetFailed      = 50001
+	MsgUpdateFailed   = 50002
+	MsgDeleteFailed   = 50003
 )

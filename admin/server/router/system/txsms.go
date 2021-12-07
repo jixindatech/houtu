@@ -11,6 +11,7 @@ import (
 )
 
 type txsmsForm struct {
+	Host      string `json:"host" validate:"required"`
 	SecretId  string `json:"secretId" validate:"required"`
 	SecretKey string `json:"secretKey" validate:"required"`
 }
@@ -30,6 +31,7 @@ func AddTxsms(c *gin.Context) {
 		return
 	}
 	txsmsSrv := service.Txsms{
+		Host:      form.Host,
 		SecretId:  form.SecretId,
 		SecretKey: form.SecretKey,
 	}
@@ -96,6 +98,7 @@ func UpdateTxsms(c *gin.Context) {
 	}
 	txsmsSrv := service.Txsms{
 		ID:        formID.ID,
+		Host:      form.Host,
 		SecretId:  form.SecretId,
 		SecretKey: form.SecretKey,
 	}

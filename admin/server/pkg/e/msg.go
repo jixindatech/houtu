@@ -21,6 +21,11 @@ var MsgFlags = map[int]string{
 	TxsmsAddFailed:    "添加Txsms失败",
 	TxsmsGetFailed:    "添加Txsms失败",
 	TxsmsUpdateFailed: "添加Txsms失败",
+
+	MsgAddFailed:    "添加msg失败",
+	MsgGetFailed:    "添加msg失败",
+	MsgUpdateFailed: "添加msg失败",
+	MsgDeleteFailed: "添加msg失败",
 }
 
 func GetMsg(code int) string {

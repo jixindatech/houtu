@@ -85,3 +85,13 @@ func GetUserByUsername(username string) (*User, error) {
 
 	return &user, nil
 }
+
+func GetBatchUser(ids []uint) ([]*User, error) {
+	var users []*User
+	err := db.Find(&users, ids).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+
+	return users, nil
+}

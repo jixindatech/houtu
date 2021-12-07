@@ -17,6 +17,8 @@ require (
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/spf13/viper v1.9.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.307
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.307
 	go.uber.org/zap v1.17.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )

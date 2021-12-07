@@ -46,6 +46,7 @@ func Setup(cfg *config.DataBase) error {
 		Email{},
 		Ldap{},
 		Txsms{},
+		Msg{},
 	)
 
 	return nil

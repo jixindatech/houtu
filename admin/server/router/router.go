@@ -58,6 +58,13 @@ func Setup(mode string) (g *gin.Engine, err error) {
 		apis.GET("/txsms", system.GetTxsms)
 		apis.POST("/txsms", system.AddTxsms)
 		apis.PUT("/txsms/:id", system.UpdateTxsms)
+
+		apis.POST("/msg", system.AddMsg)
+		apis.GET("/msg", system.GetMsgs)
+		apis.GET("/msg/:id", system.GetMsg)
+		apis.PUT("/msg/:id", system.UpdateMsg)
+		apis.DELETE("/msg/:id", system.DeleteMsg)
+		apis.POST("/msg/:id/user", system.SendMsg)
 	}
 
 	return r, nil
