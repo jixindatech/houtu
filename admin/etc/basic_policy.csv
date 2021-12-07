@@ -16,15 +16,4 @@ p, admin, ^/system/ldap$, GET
 p, admin, ^/system/ldap$, POST
 p, admin, ^/system/ldap/\+?[1-9][0-9]*$, PUT
 
-p, admin, ^/system/txsms$, GET
-p, admin, ^/system/txsms$, POST
-p, admin, ^/system/txsms/\+?[1-9][0-9]*$, PUT
-
-p, admin, ^/system/msg$, GET
-p, admin, ^/system/msg$, POST
-p, admin, ^/system/msg/\+?[1-9][0-9]*$, GET
-p, admin, ^/system/msg/\+?[1-9][0-9]*$, PUT
-p, admin, ^/system/msg/\+?[1-9][0-9]*$, DELETE
-p, admin, ^/system/msg/\+?[1-9][0-9]*/user$, POST
-
 p, test,  ^/system/user/\+?[1-9][0-9]*$, GET
