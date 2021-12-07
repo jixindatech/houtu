@@ -46,6 +46,14 @@ func (u *User) Save() error {
 			data["salt"] = salt
 			data["password"] = password
 		}
+
+		// id:1 admin only support standard and always enabled
+		if u.ID == 1 {
+			delete(data, "loginType")
+			data["status"] = 1
+			data["role"] = "admin"
+		}
+
 		return models.UpdateUser(u.ID, data)
 	}
 
@@ -115,29 +123,57 @@ func (u *User) GetLoginUser() (*models.User, error) {
 		if util.VerifyRawPassword(u.Password, user.Password, user.Salt) {
 			return user, nil
 		}
+
+		return nil, fmt.Errorf("invalid password")
 	} else if user.LoginType == "ldap" {
 		ldapConfig, err := getLdapConfig()
 		if err != nil {
 			log.Logger.Error("ldap", zap.String("err", err.Error()))
 		}
 		if ldapConfig != nil {
-			conn, err := ldap.DialURL("ldap://" + ldapConfig.Host + fmt.Sprint(":%d", ldapConfig.Port))
+			conn, err := ldap.DialURL("ldap://" + ldapConfig.Host + fmt.Sprintf(":%d", ldapConfig.Port))
 			if err != nil {
-				log.Logger.Error("ldap", zap.String("err", err.Error()))
+				return nil, err
 			}
+
 			if conn != nil {
+				defer conn.Close()
 				err = conn.Bind(ldapConfig.DN, ldapConfig.Password)
 				if err != nil {
 					return nil, err
 				}
-				//searchRequest := ldap.NewSearchRequest()
+				filter := fmt.Sprintf("(%s=%s)", util.LDAP_USERNAME, u.Username)
+				searchRequest := ldap.NewSearchRequest(
+					ldapConfig.BaseDN,
+					ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+					filter,
+					[]string{"dn", "cn", "objectClass"},
+					nil,
+				)
 
-				defer conn.Close()
+				searchResult, err := conn.Search(searchRequest)
+				if err != nil {
+					return nil, err
+				}
+				if searchRequest == nil {
+					return nil, fmt.Errorf("%s")
+				}
+				if searchResult != nil && len(searchResult.Entries) == 0 {
+					return nil, fmt.Errorf("%s", "invalid username")
+				}
+
+				entry := searchResult.Entries[0]
+				err = conn.Bind(entry.DN, u.Password)
+				if err != nil {
+					return nil, err
+				}
+
+				return user, nil
 			}
 		}
 	}
 
-	return nil, fmt.Errorf("invalid password")
+	return nil, fmt.Errorf("login failed")
 }
 
 func SaveAdmin(id uint, username, role, password string) error {

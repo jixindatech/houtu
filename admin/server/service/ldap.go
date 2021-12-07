@@ -39,14 +39,16 @@ func (l *Ldap) Get() (*models.Ldap, error) {
 }
 
 func getLdapConfig() (*Ldap, error) {
-	ldapCache = new(Ldap)
 	if ldapCache == nil {
+		ldapCache = new(Ldap)
 		ldap, err := ldapCache.Get()
 		if err != nil {
 			return nil, err
 		}
 		ldapCache.Type = ldap.Type
 		ldapCache.Host = ldap.Host
+		ldapCache.Port = ldap.Port
+		ldapCache.BaseDN = ldap.BaseDN
 		ldapCache.DN = ldap.DN
 		ldapCache.Password = ldap.Password
 		return ldapCache, nil
