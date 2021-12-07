@@ -27,7 +27,7 @@
         <el-input v-model="formData.email" maxlength="30" />
       </el-form-item>
       <el-form-item label="角色选项" prop="role">
-        <el-select v-model="formData.role" placeholder="请选择">
+        <el-select v-model="formData.role" :disabled="typeof(formData.id) !== 'undefined' && formData.id === 1" placeholder="请选择">
           <el-option
             v-for="item in ROLE_OPTIONS"
             :key="item.value"
@@ -37,7 +37,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="认证方式" prop="role">
-        <el-select v-model="formData.loginType" placeholder="请选择">
+        <el-select v-model="formData.loginType" :disabled="typeof(formData.id) !== 'undefined' && formData.id === 1" placeholder="请选择">
           <el-option
             v-for="item in LOGIN_OPTIONS"
             :key="item.value"
@@ -47,8 +47,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="帐号锁定：" prop="status">
-        <!-- (1 未锁定，0已锁定) -->
-        <el-radio-group v-model="formData.status">
+        <el-radio-group v-model="formData.status" :disabled="typeof(formData.id) !== 'undefined' && formData.id === 1">
           <el-radio :label="1" border>未锁定</el-radio>
           <el-radio :label="0" border>已锁定</el-radio>
         </el-radio-group>

@@ -8,7 +8,7 @@
       label-width="120px"
       status-icon
     >
-      <el-form-item label="Ldap类型：" prop="type" style="width: 300px">
+      <el-form-item label="Ldap类型：" prop="type" style="width: 450px">
         <el-select v-model="formData.type" placeholder="请选择">
           <el-option
             v-for="item in LDAP_TYPE_OPTIONS"
@@ -18,20 +18,20 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="Ldap服务器：" prop="host" style="width: 300px">
-        <el-input v-model="formData.host" placeholder="请输入规则类别" />
+      <el-form-item label="Ldap服务器：" prop="host" style="width: 450px">
+        <el-input v-model="formData.host" placeholder="请输入服务器" />
       </el-form-item>
-      <el-form-item label="端口：" prop="port" style="width: 300px">
+      <el-form-item label="端口：" prop="port" style="width: 450px">
         <el-input v-model.number="formData.port" placeholder="请输入端口" />
       </el-form-item>
-      <el-form-item label="DN用户：" prop="dn" style="width: 300px">
-        <el-input v-model="formData.dn" placeholder="请输入规则类别" />
+      <el-form-item label="DN用户：" prop="dn" style="width: 450px">
+        <el-input v-model="formData.dn" placeholder="请输入DN用户" />
       </el-form-item>
-      <el-form-item label="密码：" prop="password" style="width: 300px">
-        <el-input v-model="formData.password" show-password placeholder="请输入规则类别" />
+      <el-form-item label="密码：" prop="password" style="width: 450px">
+        <el-input v-model="formData.password" show-password placeholder="请输入密码" />
       </el-form-item>
-      <el-form-item label="BaseDn：" prop="basedn" style="width: 300px">
-        <el-input v-model="formData.basedn" placeholder="请输入规则类别" />
+      <el-form-item label="BaseDn：" prop="basedn" style="width: 450px">
+        <el-input v-model="formData.basedn" placeholder="请输入BaseDN" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit">保存</el-button>

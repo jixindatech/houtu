@@ -8,17 +8,17 @@
       label-width="120px"
       status-icon
     >
-      <el-form-item label="邮箱域名：" prop="host" style="width: 300px">
-        <el-input v-model="formData.host" placeholder="请输入规则类别" />
+      <el-form-item label="邮箱域名：" prop="host" style="width: 450px">
+        <el-input v-model="formData.host" placeholder="请输入邮箱域名" />
       </el-form-item>
-      <el-form-item label="端口：" prop="port" style="width: 300px">
+      <el-form-item label="端口：" prop="port" style="width: 450px">
         <el-input v-model.number="formData.port" placeholder="请输入端口" />
       </el-form-item>
-      <el-form-item label="邮箱用户：" prop="sender" style="width: 300px">
-        <el-input v-model="formData.sender" placeholder="请输入规则类别" />
+      <el-form-item label="邮箱用户：" prop="sender" style="width: 450px">
+        <el-input v-model="formData.sender" placeholder="请输入邮箱用户" />
       </el-form-item>
-      <el-form-item label="邮箱密码：" prop="password" style="width: 300px">
-        <el-input v-model="formData.password" show-password placeholder="请输入规则类别" />
+      <el-form-item label="邮箱密码：" prop="password" style="width: 450px">
+        <el-input v-model="formData.password" show-password placeholder="请输入邮箱密码" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submit">保存</el-button>

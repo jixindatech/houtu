@@ -4,7 +4,8 @@ const ROLE_OPTIONS = [
 ]
 
 const LOGIN_OPTIONS = [
-  { value: 'standard', label: 'standard' }
+  { value: 'standard', label: 'standard' },
+  { value: 'ldap', label: 'ldap' }
 ]
 
 const LDAP_TYPE_OPTIONS = [
