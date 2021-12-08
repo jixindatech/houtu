@@ -33,7 +33,7 @@
       <el-form-item label="BaseDn：" prop="basedn" style="width: 450px">
         <el-input v-model="formData.basedn" placeholder="请输入BaseDN" />
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-permission="['POST:/system/ldap', 'PUT:/system/ldap/:id']">
         <el-button type="primary" @click="submit">保存</el-button>
       </el-form-item>
     </el-form>

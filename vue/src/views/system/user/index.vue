@@ -1,5 +1,8 @@
 <template>
-  <div class="app-container">
+  <div
+    v-permission="['GET:/system/user', 'GET:/system/user/:id']"
+    class="app-container"
+  >
     <el-form :inline="true" :model="query" size="mini">
       <el-form-item label="用户名:">
         <el-input v-model.trim="query.username" />
@@ -16,6 +19,7 @@
         >重置</el-button>
         <el-button
           v-if="msgId == 0"
+          v-permission="['POST:/system/user']"
           icon="el-icon-circle-plus-outline"
           type="primary"
           @click="openAdd"
@@ -68,17 +72,20 @@
       <el-table-column v-if="msgId == 0" align="center" label="操作" width="250">
         <template slot-scope="scope">
           <el-button
+            v-permission="['PUT:/system/user']"
             type="success"
             size="mini"
             @click="handleEdit(scope.row.id)"
           >编辑</el-button>
           <el-button
+            v-permission="['PUT:/system/user/password/:id']"
             type="danger"
             size="mini"
             :disabled="scope.row.id === 1"
             @click="handleResetPassword(scope.row.id)"
           >密码重置</el-button>
           <el-button
+            v-permission="['DELETE:/system/user/:id']"
             type="danger"
             size="mini"
             :disabled="scope.row.id === 1"
@@ -98,6 +105,7 @@
     />
 
     <edit
+      v-permission="['POST:/system/user', 'PUT:/system/user/:id']"
       :title="edit.title"
       :form-data="edit.formData"
       :visible="edit.visible"

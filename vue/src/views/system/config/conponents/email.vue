@@ -20,7 +20,7 @@
       <el-form-item label="邮箱密码：" prop="password" style="width: 450px">
         <el-input v-model="formData.password" show-password placeholder="请输入邮箱密码" />
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-permission="['POST:/system/mail', 'PUT:/system/mail/:id']">
         <el-button type="primary" @click="submit">保存</el-button>
       </el-form-item>
     </el-form>

@@ -1,10 +1,10 @@
 <template>
   <div class="app-container">
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleTabChange">
-      <el-tab-pane label="邮件配置" name="email">
+      <el-tab-pane v-permission="['GET:/system/email']" label="邮件配置" name="email">
         <Email :params="activeName" name="email" />
       </el-tab-pane>
-      <el-tab-pane label="Ldap配置" name="ldap">
+      <el-tab-pane v-permission="['GET:/system/ldap']" label="Ldap配置" name="ldap">
         <Ldap :params="activeName" name="ldap" />
       </el-tab-pane>
       <!--
