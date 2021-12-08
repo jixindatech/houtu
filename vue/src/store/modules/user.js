@@ -7,7 +7,8 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    info: '',
+    info: {},
+    api: [],
     routes: []
   }
 }
@@ -27,8 +28,11 @@ const mutations = {
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
   },
+  SET_API: (state, api) => {
+    state.api = api
+  },
   SET_INFO: (state, info) => {
-    state.info = JSON.stringify(info)
+    state.info = info
   },
   SET_ROUTES: (state, routes) => {
     state.routes = routes
@@ -61,12 +65,13 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar, routes, info } = data
+        const { name, avatar, api, routes, info } = data
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_ROUTES', routes)
         commit('SET_INFO', info)
+        commit('SET_API', api)
         resolve(data)
       }).catch(error => {
         reject(error)
