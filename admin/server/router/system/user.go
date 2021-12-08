@@ -28,7 +28,7 @@ type userForm struct {
 	LoginType   string `json:"loginType" validate:"required"`
 	Email       string `json:"email" validate:"required,email"`
 	Phone       string `json:"phone" validate:"required,phone"`
-	Status      int    `json:"status" validate:"gte=0,lte=1"`
+	Status      int    `json:"status" validate:"required,gte=1,lte=2"`
 	Role        string `json:"role" validate:"required"`
 	Remark      string `json:"remark"`
 }
@@ -174,7 +174,7 @@ func GetUserInfo(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["introduction"] = user.Remark
 	data["name"] = user.Username
-	data["displayName"] = user.DisplayName
+	data["info"] = user
 
 	var roles []string
 	roles = append(roles, user.Role)
@@ -268,7 +268,70 @@ func UpdateUser(c *gin.Context) {
 		Role:        form.Role,
 		Remark:      form.Remark,
 	}
+
 	err = userSrv.Save()
+	if err != nil {
+		httpCode = http.StatusInternalServerError
+		errCode = e.UserUpdateFailed
+		log.Logger.Error("user", zap.String("err", err.Error()))
+	}
+
+	appG.Response(httpCode, errCode, "", nil)
+}
+
+type userInfoForm struct {
+	Username    string `json:"username" validate:"required"`
+	DisplayName string `json:"displayName"`
+	OldPassword string `json:"oldpassword"`
+	NewPassword string `json:"newpassword"`
+	Email       string `json:"email" validate:"required,email"`
+	Phone       string `json:"phone" validate:"required,phone"`
+}
+
+func UpdateUserInfo(c *gin.Context) {
+	var (
+		appG     = app.Gin{C: c}
+		form     userInfoForm
+		httpCode = http.StatusOK
+		errCode  = e.SUCCESS
+	)
+
+	err := app.BindAndValid(c, &form)
+	if err != nil {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, e.ERROR, err.Error(), nil)
+		return
+	}
+
+	userJwt, exist := c.Get(IDENTITY)
+	if !exist {
+		httpCode = http.StatusBadRequest
+		appG.Response(httpCode, errCode, "user jwt claim is empty", nil)
+		return
+	}
+
+	userClaim := userJwt.(*jwtUser)
+	id := userClaim.ID
+
+	userSrv := service.User{
+		ID:          id,
+		Username:    form.Username,
+		DisplayName: form.DisplayName,
+		Email:       form.Email,
+		Phone:       form.Phone,
+	}
+	if len(form.OldPassword) > 0 && len(form.NewPassword) > 0 {
+		_, err := userSrv.GetLoginUser(true)
+		if err != nil {
+			httpCode = http.StatusInternalServerError
+			errCode = e.UserUpdateFailed
+			log.Logger.Error("user", zap.String("err", err.Error()))
+		}
+
+		userSrv.Password = form.NewPassword
+	}
+
+	err = userSrv.UpdateUserInfo()
 	if err != nil {
 		httpCode = http.StatusInternalServerError
 		errCode = e.UserUpdateFailed
@@ -324,7 +387,7 @@ func Login(c *gin.Context) (interface{}, error) {
 		Password: form.Password,
 	}
 
-	user, err := userSrv.GetLoginUser()
+	user, err := userSrv.GetLoginUser(false)
 	if err != nil {
 		/* For security */
 		log.Logger.Error("user", zap.String("err", err.Error()))

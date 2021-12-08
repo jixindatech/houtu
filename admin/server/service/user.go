@@ -85,6 +85,23 @@ func (u *User) UpdatePassword() error {
 	return SendMail(user.Email, "重置密码", passwordStr)
 }
 
+func (u *User) UpdateUserInfo() error {
+	data := make(map[string]interface{})
+	if len(u.DisplayName) > 0 {
+		data["displayName"] = u.DisplayName
+		data["email"] = u.Email
+		data["phone"] = u.Phone
+	}
+
+	if len(u.Password) > 0 {
+		salt, password := util.GetSaltAndEncodedPassword(u.Password)
+		data["salt"] = salt
+		data["password"] = password
+	}
+
+	return models.UpdateUser(u.ID, data)
+}
+
 func (u *User) Delete() error {
 	if u.ID == 1 {
 		return fmt.Errorf("%s", "invalid user id")
@@ -105,7 +122,7 @@ func (u *User) GetList() ([]*models.User, uint, error) {
 	return models.GetUsers(query, u.Page, u.PageSize)
 }
 
-func (u *User) GetLoginUser() (*models.User, error) {
+func (u *User) GetLoginUser(test bool) (*models.User, error) {
 	user, err := models.GetUserByUsername(u.Username)
 	if err != nil {
 		return nil, err
@@ -115,8 +132,16 @@ func (u *User) GetLoginUser() (*models.User, error) {
 		return nil, fmt.Errorf("invalid username")
 	}
 
-	if user.Status == 0 {
+	if user.Status == util.USER_DENY {
 		return nil, fmt.Errorf("invalid user status")
+	}
+
+	if test {
+		if util.VerifyRawPassword(u.Password, user.Password, user.Salt) {
+			return user, nil
+		}
+
+		return nil, fmt.Errorf("invalid password")
 	}
 
 	if user.LoginType == "standard" {
@@ -207,4 +232,24 @@ func SaveAdmin(id uint, username, role, password string) error {
 	data["password"] = encodedPassword
 
 	return models.AddUser(data)
+}
+
+func (u *User) SaveSelf() error {
+	data := map[string]interface{}{
+		"displayName": u.DisplayName,
+		"email":       u.Email,
+		"phone":       u.Phone,
+	}
+
+	if u.ID > 0 {
+		if len(u.Password) > 0 {
+			salt, password := util.GetSaltAndEncodedPassword(u.Password)
+			data["salt"] = salt
+			data["password"] = password
+		}
+
+		return models.UpdateUser(u.ID, data)
+	}
+
+	return fmt.Errorf("%s", "invalid user id")
 }

@@ -3,6 +3,7 @@ p, *,     ^/system/user/logout, POST
 
 p, admin, ^/system/user$, GET
 p, admin, ^/system/user$, POST
+p, admin, ^/system/user$, PUT
 p, admin, ^/system/user/\+?[1-9][0-9]*$, GET
 p, admin, ^/system/user/\+?[1-9][0-9]*$, PUT
 p, admin, ^/system/user/\+?[1-9][0-9]*$, DELETE
