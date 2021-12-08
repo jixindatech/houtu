@@ -47,9 +47,12 @@
         </el-select>
       </el-form-item>
       <el-form-item label="帐号锁定：" prop="status">
-        <el-radio-group v-model="formData.status" :disabled="typeof(formData.id) !== 'undefined' && formData.id === 1">
-          <el-radio :label="1" border>未锁定</el-radio>
-          <el-radio :label="0" border>已锁定</el-radio>
+        <el-radio-group v-model.number="formData.status" :disabled="typeof(formData.id) !== 'undefined' && formData.id === 1">
+          <el-radio
+            v-for="item in USER_STATUS_OPTIONS"
+            :key="item.value"
+            :label="item.label"
+          > {{ item.value }}</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="备注：" prop="remark">
@@ -69,7 +72,7 @@
 
 <script>
 import { add, update } from '@/api/user'
-import { ROLE_OPTIONS, LOGIN_OPTIONS } from '@/utils/const'
+import { ROLE_OPTIONS, LOGIN_OPTIONS, USER_STATUS_OPTIONS } from '@/utils/const'
 
 export default {
   props: {
@@ -95,6 +98,7 @@ export default {
     return {
       ROLE_OPTIONS,
       LOGIN_OPTIONS,
+      USER_STATUS_OPTIONS,
       rules: {
         username: [{ required: true, message: '请输入名称', trigger: 'blur' }],
         displayName: [{ required: true, message: '请输入昵称', trigger: 'blur' }],

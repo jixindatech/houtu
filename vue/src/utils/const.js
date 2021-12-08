@@ -9,12 +9,17 @@ const LOGIN_OPTIONS = [
 ]
 
 const LDAP_TYPE_OPTIONS = [
-  { value: 'tcp', lable: 'tcp' },
-  { value: 'udp', lable: 'udp' }
+  { value: 'tcp', label: 'tcp' },
+  { value: 'udp', label: 'udp' }
 ]
 
+const USER_STATUS_OPTIONS = [
+  { value: '未锁定', label: 1 },
+  { value: '已锁定', label: 2 }
+]
 export {
   ROLE_OPTIONS,
   LOGIN_OPTIONS,
-  LDAP_TYPE_OPTIONS
+  LDAP_TYPE_OPTIONS,
+  USER_STATUS_OPTIONS
 }

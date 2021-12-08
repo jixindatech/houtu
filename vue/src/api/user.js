@@ -46,6 +46,14 @@ export function update(id, data) {
   })
 }
 
+export function updateInfo(data) {
+  return request({
+    url: `/system/user`,
+    method: 'put',
+    data
+  })
+}
+
 export function getById(id) {
   return request({
     url: `/system/user/${id}`,

@@ -16,18 +16,21 @@
               Home
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
+          <el-dropdown-item @click.native="editProfile">
+            <span style="display:block;">Profile</span>
+          </el-dropdown-item>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
+
+    <profile
+      :visible="profile.visible"
+      :remote-close="remoteClose"
+    />
+
   </div>
 </template>
 
@@ -35,11 +38,22 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import Profile from '@/components/profile'
 
 export default {
   components: {
     Breadcrumb,
-    Hamburger
+    Hamburger,
+    Profile
+  },
+  data() {
+    return {
+      profile: {
+        title: '',
+        visible: false,
+        formData: {}
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -54,6 +68,12 @@ export default {
     async logout() {
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+    },
+    remoteClose() {
+      this.profile.visible = false
+    },
+    editProfile() {
+      this.profile.visible = true
     }
   }
 }
