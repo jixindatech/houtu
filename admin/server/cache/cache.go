@@ -51,10 +51,16 @@ func Get(cacheType string, key string) (interface{}, error) {
 	return nil, fmt.Errorf("%s", "unknown cache type")
 }
 
+// 0 forever
 func Set(cacheType string, key string, value interface{}, ttl time.Duration) error {
+	if ttl < 0 {
+		return fmt.Errorf("%s", "invalid ttl value")
+	}
+
 	if cacheType == CONFIG {
 		cacheType = cacheConfig
 	}
+
 	instance, ok := cacheItems[cacheType]
 	if ok {
 		return instance.(Cache).Set(key, value, ttl)

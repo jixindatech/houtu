@@ -76,10 +76,19 @@ func (r *Redis) Set(key string, value interface{}, ttl time.Duration) error {
 		return err
 	}
 
-	_, err = conn.Do("SET", key, buffer.Bytes(), "EX", int(ttl))
-	if err != nil {
-		log.Logger.Error("redis", zap.String("err", err.Error()))
-		return err
+	if ttl == 0 {
+		_, err = conn.Do("SET", key, buffer.Bytes())
+		if err != nil {
+			log.Logger.Error("redis", zap.String("err", err.Error()))
+			return err
+		}
+
+	} else if ttl > 0 {
+		_, err = conn.Do("SET", key, buffer.Bytes(), "EX", int(ttl))
+		if err != nil {
+			log.Logger.Error("redis", zap.String("err", err.Error()))
+			return err
+		}
 	}
 
 	return err

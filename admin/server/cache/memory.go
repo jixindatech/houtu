@@ -2,6 +2,7 @@ package cache
 
 import (
 	"admin/config"
+	"fmt"
 	gocache "github.com/patrickmn/go-cache"
 	"time"
 )
@@ -27,6 +28,10 @@ func (m *Memory) Get(key string) (interface{}, error) {
 }
 
 func (m *Memory) Set(key string, value interface{}, expire time.Duration) error {
+	if expire < 0 {
+		return fmt.Errorf("%s", "invalid ttl value")
+	}
+
 	m.memeory.Set(key, value, expire)
 	return nil
 }
