@@ -1,6 +1,5 @@
 const ROLE_OPTIONS = [
-  { value: 'admin', lable: 'admin' },
-  { value: 'test', lable: 'test' }
+  { value: 'admin', lable: 'admin' }
 ]
 
 const LOGIN_OPTIONS = [
