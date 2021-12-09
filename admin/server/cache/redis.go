@@ -3,17 +3,24 @@ package cache
 import (
 	"admin/config"
 	"admin/core/log"
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"go.uber.org/zap"
 	"time"
 )
 
-var redisConfig *config.Redis
 var redisPool *redis.Pool
 
-func setupRedisCache(cfg *config.Redis) error {
-	redisConfig = cfg
+type Redis struct {
+	config *config.Redis
+	pool   *redis.Pool
+}
+
+func setupRedis(cfg *config.Redis) (*Redis, error) {
+	redisCache := new(Redis)
+	redisCache.config = cfg
 	redisPool = &redis.Pool{
 		MaxIdle:     10,
 		MaxActive:   10,
@@ -46,22 +53,30 @@ func setupRedisCache(cfg *config.Redis) error {
 		},
 	}
 
-	return nil
+	redisCache.pool = redisPool
+	return redisCache, nil
 }
 
-func redisSet(key string, value interface{}, ttl time.Duration) error {
-	if redisConfig == nil {
+func (r *Redis) Set(key string, value interface{}, ttl time.Duration) error {
+	if r.config == nil {
 		return fmt.Errorf("%s", "invalid redis instance")
 	}
 
 	conn := redisPool.Get()
 	defer conn.Close()
 
-	if redisConfig.KeyPrefix != "" {
-		key = redisConfig.KeyPrefix + key
+	if r.config.KeyPrefix != "" {
+		key = r.config.KeyPrefix + key
 	}
 
-	_, err := conn.Do("SET", key, value, "EX", int(ttl))
+	var buffer bytes.Buffer
+	enc := gob.NewEncoder(&buffer)
+	err := enc.Encode(value)
+	if err != nil {
+		return err
+	}
+
+	_, err = conn.Do("SET", key, buffer.Bytes(), "EX", int(ttl))
 	if err != nil {
 		log.Logger.Error("redis", zap.String("err", err.Error()))
 		return err
@@ -70,16 +85,16 @@ func redisSet(key string, value interface{}, ttl time.Duration) error {
 	return err
 }
 
-func redisGet(key string) (interface{}, error) {
-	if redisConfig == nil {
+func (r *Redis) Get(key string) (interface{}, error) {
+	if r.config == nil {
 		return "", fmt.Errorf("%s", "invalid redis instance")
 	}
 
 	conn := redisPool.Get()
 	defer conn.Close()
 
-	if redisConfig.KeyPrefix != "" {
-		key = redisConfig.KeyPrefix + key
+	if r.config.KeyPrefix != "" {
+		key = r.config.KeyPrefix + key
 	}
 
 	return redis.Bytes(conn.Do("GET", key))

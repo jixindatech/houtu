@@ -2,55 +2,56 @@ package cache
 
 import (
 	"admin/config"
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"time"
 )
 
+const (
+	MEMORY = 1
+	REDIS  = 2
+)
+
+type Cache interface {
+	Get(key string) (interface{}, error)
+	Set(key string, value interface{}, ttl time.Duration) error
+}
+
+var cache map[int]interface{}
 var cacheType string
 
 func SetupCache(cfg *config.Config) error {
+	cache := make(map[int]interface{})
 	cacheType = cfg.Cache
-	if cfg.Cache == "redis" {
-		return setupRedisCache(cfg.Redis)
-	} else if cfg.Cache == "memory" {
-		return setupMemoryCache(cfg.Memory)
-	}
 
-	return fmt.Errorf("%s", "invalid cache type")
-}
-
-func Get(key string) (interface{}, error) {
-	if cacheType == "" {
-		return "", fmt.Errorf("%s", "invalid cache type")
-	}
-	if cacheType == "redis" {
-		return redisGet(key)
-	} else if cacheType == "memory" {
-		return memoryGet(key)
-	}
-
-	return "", nil
-}
-
-func Set(key string, value interface{}, ttl time.Duration) error {
-	if cacheType == "" {
-		return fmt.Errorf("%s", "invalid cache type")
-	}
-
-	var buffer bytes.Buffer
-	enc := gob.NewEncoder(&buffer)
-	err := enc.Encode(value)
+	cacheRedis, err := setupRedis(cfg.Redis)
 	if err != nil {
 		return err
 	}
+	cache[REDIS] = cacheRedis
 
-	if cacheType == "redis" {
-		return redisSet(key, buffer.Bytes(), ttl)
-	} else if cacheType == "memory" {
-		return memorySet(key, buffer.Bytes(), ttl)
+	memory, err := setupMemory(cfg.Memory)
+	if err != nil {
+		return err
 	}
+	cache[MEMORY] = memory
 
 	return nil
+}
+
+func Get(cacheType int, key string) (interface{}, error) {
+	instance, ok := cache[cacheType]
+	if ok {
+		return instance.(Cache).Get(key)
+	}
+
+	return nil, fmt.Errorf("%s", "unknown cache type")
+}
+
+func Set(cacheType int, key string, value interface{}, ttl time.Duration) error {
+	instance, ok := cache[cacheType]
+	if ok {
+		return instance.(Cache).Set(key, value, ttl)
+	}
+
+	return fmt.Errorf("%s", "unknown cache type")
 }

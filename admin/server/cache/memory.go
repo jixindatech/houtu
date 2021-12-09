@@ -2,28 +2,31 @@ package cache
 
 import (
 	"admin/config"
-	"github.com/patrickmn/go-cache"
+	gocache "github.com/patrickmn/go-cache"
 	"time"
 )
 
-var memoryConfig *config.Memory
-var memoryCache *cache.Cache
-
-func setupMemoryCache(cfg *config.Memory) error {
-	memoryConfig = cfg
-	memoryCache = cache.New(5*time.Minute, memoryConfig.PurgeTime)
-
-	return nil
+type Memory struct {
+	config  *config.Memory
+	memeory *gocache.Cache
 }
 
-func memoryGet(key string) (interface{}, error) {
-	if x, found := memoryCache.Get(key); found {
+func setupMemory(cfg *config.Memory) (*Memory, error) {
+	memoryCache := new(Memory)
+	memoryCache.config = cfg
+	memoryCache.memeory = gocache.New(5*time.Minute, memoryCache.config.PurgeTime)
+
+	return memoryCache, nil
+}
+
+func (m *Memory) Get(key string) (interface{}, error) {
+	if x, found := m.memeory.Get(key); found {
 		return x, nil
 	}
 	return nil, nil
 }
 
-func memorySet(key string, value interface{}, expire time.Duration) error {
-	memoryCache.Set(key, value, expire)
+func (m *Memory) Set(key string, value interface{}, expire time.Duration) error {
+	m.memeory.Set(key, value, expire)
 	return nil
 }

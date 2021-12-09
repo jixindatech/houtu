@@ -79,7 +79,7 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 			}
 
 			var user models.User
-			userBytes, err := cache.Get(jwtUser.Username)
+			userBytes, err := cache.Get(cache.MEMORY, jwtUser.Username)
 			if err != nil || userBytes == nil {
 				userSrv := service.User{
 					ID: jwtUser.ID,
@@ -88,7 +88,7 @@ func GetJwtMiddleWare(login func(c *gin.Context) (interface{}, error), logout fu
 				if err != nil {
 					log.Logger.Error("user", zap.String("err", err.Error()))
 				} else {
-					err = cache.Set(jwtUser.Username, user, cacheTTL)
+					err = cache.Set(cache.MEMORY, jwtUser.Username, user, cacheTTL)
 					if err != nil {
 						log.Logger.Error("user", zap.String("err", err.Error()))
 					}
