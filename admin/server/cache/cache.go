@@ -7,8 +7,9 @@ import (
 )
 
 const (
-	MEMORY = 1
-	REDIS  = 2
+	CONFIG = "config"
+	MEMORY = "memroy"
+	REDIS  = "redis"
 )
 
 type Cache interface {
@@ -16,30 +17,33 @@ type Cache interface {
 	Set(key string, value interface{}, ttl time.Duration) error
 }
 
-var cache map[int]interface{}
-var cacheType string
+var cacheItems map[string]interface{}
+var cacheConfig string
 
 func SetupCache(cfg *config.Config) error {
-	cache := make(map[int]interface{})
-	cacheType = cfg.Cache
+	cacheItems := make(map[string]interface{})
+	cacheConfig = cfg.Cache
 
 	cacheRedis, err := setupRedis(cfg.Redis)
 	if err != nil {
 		return err
 	}
-	cache[REDIS] = cacheRedis
+	cacheItems[REDIS] = cacheRedis
 
 	memory, err := setupMemory(cfg.Memory)
 	if err != nil {
 		return err
 	}
-	cache[MEMORY] = memory
+	cacheItems[MEMORY] = memory
 
 	return nil
 }
 
-func Get(cacheType int, key string) (interface{}, error) {
-	instance, ok := cache[cacheType]
+func Get(cacheType string, key string) (interface{}, error) {
+	if cacheType == CONFIG {
+		cacheType = cacheConfig
+	}
+	instance, ok := cacheItems[cacheType]
 	if ok {
 		return instance.(Cache).Get(key)
 	}
@@ -47,8 +51,11 @@ func Get(cacheType int, key string) (interface{}, error) {
 	return nil, fmt.Errorf("%s", "unknown cache type")
 }
 
-func Set(cacheType int, key string, value interface{}, ttl time.Duration) error {
-	instance, ok := cache[cacheType]
+func Set(cacheType string, key string, value interface{}, ttl time.Duration) error {
+	if cacheType == CONFIG {
+		cacheType = cacheConfig
+	}
+	instance, ok := cacheItems[cacheType]
 	if ok {
 		return instance.(Cache).Set(key, value, ttl)
 	}
