@@ -69,22 +69,16 @@ func (r *Redis) Set(key string, value interface{}, ttl time.Duration) error {
 		key = r.config.KeyPrefix + key
 	}
 
-	var buffer bytes.Buffer
-	enc := gob.NewEncoder(&buffer)
-	err := enc.Encode(value)
-	if err != nil {
-		return err
-	}
-
+	var err error
 	if ttl == 0 {
-		_, err = conn.Do("SET", key, buffer.Bytes())
+		_, err = conn.Do("SET", key, value.(string))
 		if err != nil {
 			log.Logger.Error("redis", zap.String("err", err.Error()))
 			return err
 		}
 
 	} else if ttl > 0 {
-		_, err = conn.Do("SET", key, buffer.Bytes(), "EX", int(ttl))
+		_, err = conn.Do("SET", key, value.(string), "EX", int(ttl))
 		if err != nil {
 			log.Logger.Error("redis", zap.String("err", err.Error()))
 			return err
