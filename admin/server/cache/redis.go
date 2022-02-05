@@ -3,8 +3,6 @@ package cache
 import (
 	"admin/config"
 	"admin/core/log"
-	"bytes"
-	"encoding/gob"
 	"fmt"
 	"github.com/gomodule/redigo/redis"
 	"go.uber.org/zap"
