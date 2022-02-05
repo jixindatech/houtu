@@ -2,6 +2,8 @@ package cache
 
 import (
 	"admin/config"
+	"bytes"
+	"encoding/gob"
 	"fmt"
 	gocache "github.com/patrickmn/go-cache"
 	"time"
