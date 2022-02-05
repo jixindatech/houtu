@@ -1,3 +1,4 @@
+p, *,     ^/login, POST
 p, *,     ^/system/user/info, GET
 p, *,     ^/system/user/logout, POST
 
